@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"reflect"
 )
 
 type Kind int
@@ -24,7 +25,7 @@ const (
 
 const (
 	PrimitiveVal Kind = iota + 1
-	PlaceHolder
+	ReferenceVal
 	ValueOperator
 	Array
 	Expression
@@ -39,18 +40,19 @@ type Node struct {
 	Childrens       *[]Node
 }
 
-func ToOperator(s string) (Operator, error) {
-	switch s {
+func ToOperator(t Token) Operator {
+	switch t {
 	case string(And):
-		return And, nil
+		return And
 	case string(Or):
-		return Or, nil
+		return Or
 	case string(Equals):
-		return Equals, nil
+		return Equals
 	case string(NotEquals):
-		return NotEquals, nil
+		return NotEquals
 	default:
-		return "", fmt.Errorf("invalid token '%s' for bool operator", s)
+		fmt.Printf("invalid token '%v' type '%s' for operator \n", t, reflect.TypeOf(t))
+		return ""
 	}
 }
 
@@ -62,9 +64,9 @@ func (er EvalResult) ToString() string {
 		return "True"
 	case False:
 		return "False"
+	default:
+		return "Undefined"
 	}
-
-	return "Undefined"
 }
 
 type Tree struct {
@@ -75,7 +77,55 @@ func (t Tree) eval() bool {
 	return t.Root.eval() == True
 }
 
-func (n Node) eval() EvalResult {
+func (n *Node) SetEval(er EvalResult) {
+	(*n).CommulativeEval = er
+}
+
+func RunBoolOperation(n *Node) EvalResult {
+	switch operator := ToOperator(n.Token); operator {
+	case And:
+		n.CommulativeEval = True
+		for i := range *n.Childrens {
+			child := &(*n.Childrens)[i]
+
+			if child.CommulativeEval == False {
+				n.CommulativeEval = False
+				break
+			}
+		}
+	default:
+		n.CommulativeEval = False
+	}
+
+	return n.CommulativeEval
+}
+
+func RunValueOperation(n *Node) EvalResult {
+	childs := *n.Childrens
+
+	switch operator := ToOperator(n.Token); operator {
+	case Equals:
+		if len(childs) != 2 {
+			fmt.Printf("Cannot evaluate expression with %d arguments, expected 2 \n", len(childs))
+			n.CommulativeEval = False
+		} else {
+
+			if childs[0] == childs[1] {
+				n.CommulativeEval = True
+			} else {
+				n.CommulativeEval = False
+			}
+
+			fmt.Printf("Evaluating [%v == %v] -> %v \n", childs[0].Token, childs[1].Token, n.CommulativeEval.ToString())
+		}
+	default:
+		n.CommulativeEval = False
+	}
+
+	return n.CommulativeEval
+}
+
+func (n *Node) eval() EvalResult {
 	if n.CommulativeEval != Undefined {
 		return n.CommulativeEval
 	}
@@ -84,43 +134,19 @@ func (n Node) eval() EvalResult {
 		n.CommulativeEval = False
 		return n.CommulativeEval
 	} else {
-		for _, child := range *n.Childrens {
+		for i := range *n.Childrens {
+			child := &(*n.Childrens)[i]
 			child.eval()
 		}
 	}
 
 	switch kind := n.Kind; kind {
 	case BoolOperator:
-		switch operator, _ := ToOperator((n.Token).(string)); operator {
-		case And:
-			n.CommulativeEval = True
-			for _, child := range *n.Childrens {
-				if child.CommulativeEval == False {
-					n.CommulativeEval = False
-					break
-				}
-			}
-		default:
-			n.CommulativeEval = False
-		}
+		n.CommulativeEval = RunBoolOperation(n)
 
 	case ValueOperator:
-		switch operator, _ := ToOperator((n.Token).(string)); operator {
-		case Equals:
-			if len(*n.Childrens) != 2 {
-				fmt.Printf("Cannot evaluate expression with %d arguments, expected 2 \n", len(*n.Childrens))
-				n.CommulativeEval = False
-			} else {
-				fmt.Printf("Evaluating %v == %v \n", (*n.Childrens)[0].Token, (*n.Childrens)[1].Token)
-				if (*n.Childrens)[0] == (*n.Childrens)[1] {
-					n.CommulativeEval = True
-				} else {
-					n.CommulativeEval = False
-				}
-			}
-		default:
-			n.CommulativeEval = False
-		}
+		n.CommulativeEval = RunValueOperation(n)
+
 	default:
 		n.CommulativeEval = False
 	}
