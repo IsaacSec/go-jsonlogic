@@ -19,7 +19,7 @@ func TestTree(t *testing.T) {
 	var expression = []Node{
 		{
 			Token: "==",
-			Kind:  ValueOperator,
+			Kind:  Operator,
 			Childrens: &[]Node{
 				{
 					Token: 3,
@@ -33,9 +33,9 @@ func TestTree(t *testing.T) {
 		},
 	}
 
-	tree.Root = &Node{Token: "and", Kind: BoolOperator, Childrens: &expression}
+	tree.Root = &Node{Token: "and", Kind: Operator, Childrens: &expression}
 
-	if tree.eval() == false {
+	if tree.Eval() == false {
 		t.Errorf("Expected true %+v", tree.Root)
 	}
 }
@@ -56,7 +56,7 @@ func TestFalseTree(t *testing.T) {
 	var expression = []Node{
 		{
 			Token: "==",
-			Kind:  ValueOperator,
+			Kind:  Operator,
 			Childrens: &[]Node{
 				{
 					Token: "pass",
@@ -70,7 +70,7 @@ func TestFalseTree(t *testing.T) {
 		},
 		{
 			Token: "==",
-			Kind:  ValueOperator,
+			Kind:  Operator,
 			Childrens: &[]Node{
 				{
 					Token: 4,
@@ -84,9 +84,9 @@ func TestFalseTree(t *testing.T) {
 		},
 	}
 
-	tree.Root = &Node{Token: "and", Kind: BoolOperator, Childrens: &expression}
+	tree.Root = &Node{Token: "and", Kind: Operator, Childrens: &expression}
 
-	if tree.eval() == true {
+	if tree.Eval() == true {
 		t.Errorf("Expected true %+v", tree.Root)
 	}
 }
@@ -104,14 +104,14 @@ func TestInvalidTokenInOperator(t *testing.T) {
 	var expression = []Node{
 		{
 			Token:     2345,
-			Kind:      ValueOperator,
+			Kind:      Operator,
 			Childrens: &[]Node{},
 		},
 	}
 
-	tree.Root = &Node{Token: "and", Kind: BoolOperator, Childrens: &expression}
+	tree.Root = &Node{Token: "and", Kind: Operator, Childrens: &expression}
 
-	if tree.eval() == true {
+	if tree.Eval() == true {
 		t.Errorf("Expected False %+v", tree.Root)
 	}
 }

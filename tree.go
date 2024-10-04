@@ -7,14 +7,14 @@ import (
 
 type Kind int
 type EvalResult int
-type Operator string
+type OperatorToken string
 type Token interface{}
 
 const (
-	And       Operator = "and"
-	Or        Operator = "or"
-	Equals    Operator = "=="
-	NotEquals Operator = "!="
+	And       OperatorToken = "and"
+	Or        OperatorToken = "or"
+	Equals    OperatorToken = "=="
+	NotEquals OperatorToken = "!="
 )
 
 const (
@@ -26,10 +26,9 @@ const (
 const (
 	PrimitiveVal Kind = iota + 1
 	ReferenceVal
-	ValueOperator
+	Operator
 	Array
 	Expression
-	BoolOperator
 	Object
 )
 
@@ -40,7 +39,7 @@ type Node struct {
 	Childrens       *[]Node
 }
 
-func ToOperator(t Token) Operator {
+func ToOperator(t Token) OperatorToken {
 	switch t {
 	case string(And):
 		return And
@@ -73,15 +72,13 @@ type Tree struct {
 	Root *Node
 }
 
-func (t Tree) eval() bool {
+func (t Tree) Eval() bool {
 	return t.Root.eval() == True
 }
 
-func (n *Node) SetEval(er EvalResult) {
-	(*n).CommulativeEval = er
-}
+func runOperation(n *Node) EvalResult {
+	childs := *n.Childrens
 
-func RunBoolOperation(n *Node) EvalResult {
 	switch operator := ToOperator(n.Token); operator {
 	case And:
 		n.CommulativeEval = True
@@ -93,17 +90,6 @@ func RunBoolOperation(n *Node) EvalResult {
 				break
 			}
 		}
-	default:
-		n.CommulativeEval = False
-	}
-
-	return n.CommulativeEval
-}
-
-func RunValueOperation(n *Node) EvalResult {
-	childs := *n.Childrens
-
-	switch operator := ToOperator(n.Token); operator {
 	case Equals:
 		if len(childs) != 2 {
 			fmt.Printf("Cannot evaluate expression with %d arguments, expected 2 \n", len(childs))
@@ -141,11 +127,8 @@ func (n *Node) eval() EvalResult {
 	}
 
 	switch kind := n.Kind; kind {
-	case BoolOperator:
-		n.CommulativeEval = RunBoolOperation(n)
-
-	case ValueOperator:
-		n.CommulativeEval = RunValueOperation(n)
+	case Operator:
+		n.CommulativeEval = runOperation(n)
 
 	default:
 		n.CommulativeEval = False
