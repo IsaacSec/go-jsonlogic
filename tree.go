@@ -2,76 +2,40 @@ package main
 
 import (
 	"fmt"
+
+	op "github.com/IsaacSec/go-jsonlogic/operators"
+	"github.com/IsaacSec/go-jsonlogic/parser"
 )
-
-type Kind int
-type EvalResult int
-type Token interface{}
-
-const (
-	Undefined EvalResult = iota
-	True
-	False
-)
-
-const (
-	PrimitiveVal Kind = iota + 1
-	ReferenceVal
-	Operator
-	Array
-	Expression
-	Object
-)
-
-type Node struct {
-	Token           Token
-	Kind            Kind
-	CommulativeEval EvalResult
-	Childrens       *[]Node
-}
-
-func (er EvalResult) ToString() string {
-	switch er {
-	case Undefined:
-		return "Undefined"
-	case True:
-		return "True"
-	case False:
-		return "False"
-	default:
-		return "Undefined"
-	}
-}
 
 type Tree struct {
-	Root *Node
+	Root *parser.Node
 }
 
 func (t Tree) Eval() bool {
-	return t.Root.eval() == True
+	return eval(t.Root) == parser.True
 }
 
-func (n *Node) eval() EvalResult {
-	if n.CommulativeEval != Undefined {
+func eval(n *parser.Node) parser.EvalResult {
+	if n.CommulativeEval != parser.Undefined {
 		return n.CommulativeEval
 	}
 
 	if n.Childrens == nil {
-		n.CommulativeEval = False
+		n.CommulativeEval = parser.False
 		return n.CommulativeEval
 	} else {
 		for i := range *n.Childrens {
 			child := &(*n.Childrens)[i]
-			child.eval()
+			eval(child)
 		}
 	}
 
 	switch kind := n.Kind; kind {
-	case Operator:
-		n.CommulativeEval = RunOperation(n)
+	case parser.Operator:
+		n.CommulativeEval = op.Run(n)
 
 	default:
-		n.CommulativeEval = False
+		n.CommulativeEval = parser.False
 	}
 
 	fmt.Printf("Token [%v] result: %v\n", n.Token, n.CommulativeEval.ToString())

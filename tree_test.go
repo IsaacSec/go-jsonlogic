@@ -2,6 +2,8 @@ package main
 
 import (
 	"testing"
+
+	"github.com/IsaacSec/go-jsonlogic/parser"
 )
 
 /*
@@ -16,24 +18,24 @@ Test simple tree evaluation equivalent to
 func TestTree(t *testing.T) {
 
 	var tree Tree = Tree{}
-	var expression = []Node{
+	var expression = []parser.Node{
 		{
 			Token: "==",
-			Kind:  Operator,
-			Childrens: &[]Node{
+			Kind:  parser.Operator,
+			Childrens: &[]parser.Node{
 				{
 					Token: 3,
-					Kind:  PrimitiveVal,
+					Kind:  parser.PrimitiveVal,
 				},
 				{
 					Token: 3,
-					Kind:  PrimitiveVal,
+					Kind:  parser.PrimitiveVal,
 				},
 			},
 		},
 	}
 
-	tree.Root = &Node{Token: "and", Kind: Operator, Childrens: &expression}
+	tree.Root = &parser.Node{Token: "and", Kind: parser.Operator, Childrens: &expression}
 
 	if tree.Eval() == false {
 		t.Errorf("Expected true %+v", tree.Root)
@@ -53,38 +55,38 @@ Test simple tree evaluation equivalent to
 func TestFalseTree(t *testing.T) {
 
 	var tree Tree = Tree{}
-	var expression = []Node{
+	var expression = []parser.Node{
 		{
 			Token: "==",
-			Kind:  Operator,
-			Childrens: &[]Node{
+			Kind:  parser.Operator,
+			Childrens: &[]parser.Node{
 				{
 					Token: "pass",
-					Kind:  PrimitiveVal,
+					Kind:  parser.PrimitiveVal,
 				},
 				{
 					Token: "pass",
-					Kind:  PrimitiveVal,
+					Kind:  parser.PrimitiveVal,
 				},
 			},
 		},
 		{
 			Token: "==",
-			Kind:  Operator,
-			Childrens: &[]Node{
+			Kind:  parser.Operator,
+			Childrens: &[]parser.Node{
 				{
 					Token: 4,
-					Kind:  PrimitiveVal,
+					Kind:  parser.PrimitiveVal,
 				},
 				{
 					Token: 3,
-					Kind:  PrimitiveVal,
+					Kind:  parser.PrimitiveVal,
 				},
 			},
 		},
 	}
 
-	tree.Root = &Node{Token: "and", Kind: Operator, Childrens: &expression}
+	tree.Root = &parser.Node{Token: "and", Kind: parser.Operator, Childrens: &expression}
 
 	if tree.Eval() == true {
 		t.Errorf("Expected true %+v", tree.Root)
@@ -101,15 +103,15 @@ Test evaluating invalid operator (int are not valid for json key)
 func TestInvalidTokenInOperator(t *testing.T) {
 
 	var tree Tree = Tree{}
-	var expression = []Node{
+	var expression = []parser.Node{
 		{
 			Token:     2345,
-			Kind:      Operator,
-			Childrens: &[]Node{},
+			Kind:      parser.Operator,
+			Childrens: &[]parser.Node{},
 		},
 	}
 
-	tree.Root = &Node{Token: "and", Kind: Operator, Childrens: &expression}
+	tree.Root = &parser.Node{Token: "and", Kind: parser.Operator, Childrens: &expression}
 
 	if tree.Eval() == true {
 		t.Errorf("Expected False %+v", tree.Root)

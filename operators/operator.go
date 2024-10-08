@@ -1,15 +1,17 @@
-package main
+package operators
 
 import (
 	"fmt"
 	"reflect"
+
+	"github.com/IsaacSec/go-jsonlogic/parser"
 )
 
 type OperatorToken string
 
 type OperatorRunnable struct {
 	Token    OperatorToken
-	Evaluate func(n *Node) EvalResult
+	Evaluate func(n *parser.Node) parser.EvalResult
 }
 
 const (
@@ -23,15 +25,15 @@ var operatorMap map[OperatorToken]OperatorRunnable = make(map[OperatorToken]Oper
 
 var andOperator = OperatorRunnable{
 	Token: And,
-	Evaluate: func(n *Node) EvalResult {
+	Evaluate: func(n *parser.Node) parser.EvalResult {
 		childs := *n.Childrens
 
-		n.CommulativeEval = True
+		n.CommulativeEval = parser.True
 		for i := range childs {
 			child := &(childs)[i]
 
-			if child.CommulativeEval == False {
-				n.CommulativeEval = False
+			if child.CommulativeEval == parser.False {
+				n.CommulativeEval = parser.False
 				break
 			}
 		}
@@ -42,18 +44,18 @@ var andOperator = OperatorRunnable{
 
 var equalsOperator = OperatorRunnable{
 	Token: Equals,
-	Evaluate: func(n *Node) EvalResult {
+	Evaluate: func(n *parser.Node) parser.EvalResult {
 		childs := *n.Childrens
 
 		if len(childs) != 2 {
 			fmt.Printf("Cannot evaluate expression with %d arguments, expected 2 \n", len(childs))
-			n.CommulativeEval = False
+			n.CommulativeEval = parser.False
 		} else {
 
 			if childs[0] == childs[1] {
-				n.CommulativeEval = True
+				n.CommulativeEval = parser.True
 			} else {
-				n.CommulativeEval = False
+				n.CommulativeEval = parser.False
 			}
 
 			fmt.Printf("Evaluating [%v == %v] -> %v \n", childs[0].Token, childs[1].Token, n.CommulativeEval.ToString())
@@ -68,7 +70,7 @@ func init() {
 	operatorMap[Equals] = equalsOperator
 }
 
-func ToOperator(t Token) OperatorToken {
+func ToOperator(t parser.Token) OperatorToken {
 	switch t {
 	case string(And):
 		return And
@@ -84,14 +86,14 @@ func ToOperator(t Token) OperatorToken {
 	}
 }
 
-func RunOperation(n *Node) EvalResult {
+func Run(n *parser.Node) parser.EvalResult {
 
 	operator, ok := operatorMap[ToOperator(n.Token)]
 
 	if ok {
 		n.CommulativeEval = operator.Evaluate(n)
 	} else {
-		n.CommulativeEval = False
+		n.CommulativeEval = parser.False
 	}
 
 	return n.CommulativeEval
