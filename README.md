@@ -1,6 +1,6 @@
-JSON Logic go implementation
+### JSON Logic go implementation
 
-Features
-[] Json parser to decision tree
-[] Logical operators
-[] Numeric operators
+## Features
+- [ ] Json parser to decision tree
+- [ ] Logical operators
+- [ ] Numeric operators
