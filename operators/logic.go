@@ -109,9 +109,10 @@ var notEqualsEvaluator = OperatorRunnable{
 			}
 
 			fmt.Printf(
-				"Evaluating [ (%s) %v == (%s) %v ] -> %v \n",
+				"Evaluating [ (%s) %v %s (%s) %v ] -> %v \n",
 				reflect.TypeOf(first),
 				first,
+				n.Token,
 				reflect.TypeOf(second),
 				second,
 				n.CommulativeEval.ToString(),
