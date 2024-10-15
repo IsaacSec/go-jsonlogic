@@ -15,10 +15,14 @@ type OperatorRunnable struct {
 }
 
 const (
-	And       OperatorToken = "and"
-	Or        OperatorToken = "or"
-	Equals    OperatorToken = "=="
-	NotEquals OperatorToken = "!="
+	And                 OperatorToken = "and"
+	Or                  OperatorToken = "or"
+	Equals              OperatorToken = "=="
+	NotEquals           OperatorToken = "!="
+	LessThan            OperatorToken = "<"
+	LessOrEqualsThan    OperatorToken = "<="
+	GreaterThan         OperatorToken = ">"
+	GreaterOrEqualsThan OperatorToken = ">="
 )
 
 var operatorMap map[OperatorToken]OperatorRunnable = make(map[OperatorToken]OperatorRunnable)
