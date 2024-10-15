@@ -5,6 +5,7 @@ import (
 	"reflect"
 
 	"github.com/IsaacSec/go-jsonlogic/parser"
+	"github.com/IsaacSec/go-jsonlogic/util"
 )
 
 var lessThanOperator = OperatorRunnable{
@@ -17,29 +18,15 @@ var lessThanOperator = OperatorRunnable{
 			n.CommulativeEval = parser.False
 		} else {
 
-			first := childs[0].Token
-			second := childs[1].Token
+			first, second, err := util.ConvertToFloat(childs[0].Token, childs[1].Token)
 
-			if reflect.TypeOf(first) != reflect.TypeOf(second) {
-				fmt.Printf(
-					"Cannot evaluate expression with arguments with different types arg0 (%v) arg1 (%v) \n",
-					reflect.TypeOf(first),
-					reflect.TypeOf(second),
-				)
+			if err != nil {
+				fmt.Printf("Conversion failed: %s\n", err)
 				n.CommulativeEval = parser.False
 				return n.CommulativeEval
 			}
 
-			switch reflect.TypeOf(first).Kind() {
-			case reflect.Int, reflect.Int32, reflect.Int64:
-				first = first.(int)
-				second = second.(int)
-			default:
-				n.CommulativeEval = parser.False
-				return n.CommulativeEval
-			}
-
-			if first.(int) < second.(int) {
+			if first < second {
 				n.CommulativeEval = parser.True
 			} else {
 				n.CommulativeEval = parser.False

@@ -6,7 +6,7 @@ import (
 )
 
 func TestFloatConversionWithIncompatibleValues(t *testing.T) {
-	a, b, err := ToFloat("one", 45)
+	a, b, err := ConvertToFloat("one", 45)
 
 	fmt.Printf("Values: %v %v %v\n", a, b, err)
 
@@ -16,7 +16,7 @@ func TestFloatConversionWithIncompatibleValues(t *testing.T) {
 }
 
 func TestFloatConversionWithSameType(t *testing.T) {
-	a, b, err := ToFloat(123, "123.33")
+	a, b, err := ConvertToFloat(123, "123.33")
 
 	fmt.Printf("Values: %v %v %v\n", a, b, err)
 

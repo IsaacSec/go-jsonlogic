@@ -5,11 +5,7 @@ import (
 	"strconv"
 )
 
-type Numeric interface {
-	int | float64 | string | bool
-}
-
-func toFloat[T Numeric](value T) (res float64, err error) {
+func toFloat(value any) (res float64, err error) {
 	switch v := any(value).(type) {
 	case int:
 		res = float64(v)
@@ -30,7 +26,7 @@ func toFloat[T Numeric](value T) (res float64, err error) {
 	return res, err
 }
 
-func ToFloat[T Numeric, V Numeric](a T, b V) (ia float64, ib float64, err error) {
+func ConvertToFloat(a any, b any) (ia float64, ib float64, err error) {
 
 	defer func() {
 		if r := recover(); r != nil {
@@ -42,7 +38,7 @@ func ToFloat[T Numeric, V Numeric](a T, b V) (ia float64, ib float64, err error)
 	ib, bErr := toFloat(b)
 
 	if aErr != nil || bErr != nil {
-		err = fmt.Errorf("conversion error with arg0: [%v] arg1: [%v]", aErr, bErr)
+		err = fmt.Errorf("arg0: [%v] or arg1: [%v] cannot be converted", aErr, bErr)
 	}
 
 	return
