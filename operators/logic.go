@@ -1,10 +1,10 @@
 package operators
 
 import (
-	"fmt"
 	"reflect"
 
 	"github.com/IsaacSec/go-jsonlogic/parser"
+	log "github.com/IsaacSec/go-jsonlogic/util/logger"
 )
 
 var andOperator = OperatorRunnable{

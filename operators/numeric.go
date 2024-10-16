@@ -1,11 +1,11 @@
 package operators
 
 import (
-	"fmt"
 	"reflect"
 
 	"github.com/IsaacSec/go-jsonlogic/parser"
 	"github.com/IsaacSec/go-jsonlogic/util"
+	log "github.com/IsaacSec/go-jsonlogic/util/logger"
 )
 
 var lessThanOperator = OperatorRunnable{

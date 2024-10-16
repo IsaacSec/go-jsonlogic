@@ -38,7 +38,7 @@ func eval(n *parser.Node) parser.EvalResult {
 		n.CommulativeEval = parser.False
 	}
 
-	fmt.Printf("Token [%v] result: %v\n", n.Token, n.CommulativeEval.ToString())
+	log.Info("Token [%v] result: %v", n.Token, n.CommulativeEval.ToString())
 
 	return n.CommulativeEval
 }
