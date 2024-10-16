@@ -1,4 +1,4 @@
-package main
+package tree
 
 import (
 	op "github.com/IsaacSec/go-jsonlogic/operators"
@@ -12,6 +12,23 @@ type Tree struct {
 
 func (t Tree) Eval() bool {
 	return eval(t.Root) == token.True
+}
+
+func (t Tree) Flatten() []*token.Node {
+	var flattened = []*token.Node{t.Root}
+	var Add func(n *token.Node)
+
+	Add = func(n *token.Node) {
+		for i := range n.Childrens {
+			child := n.Childrens[i]
+			flattened = append(flattened, child)
+			Add(child)
+		}
+	}
+
+	Add(t.Root)
+
+	return flattened
 }
 
 func eval(n *token.Node) token.EvalResult {
