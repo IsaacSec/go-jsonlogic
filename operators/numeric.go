@@ -3,37 +3,37 @@ package operators
 import (
 	"reflect"
 
-	"github.com/IsaacSec/go-jsonlogic/parser"
+	"github.com/IsaacSec/go-jsonlogic/parser/token"
 	"github.com/IsaacSec/go-jsonlogic/util"
 	log "github.com/IsaacSec/go-jsonlogic/util/logger"
 )
 
 var lessThanOperator = OperatorRunnable{
-	Token: LessThan,
-	Evaluate: func(n *parser.Node) parser.EvalResult {
-		childs := *n.Childrens
+	Token: "<",
+	Evaluate: func(n *token.Node) token.EvalResult {
+		childs := n.Childrens
 
 		if len(childs) != 2 {
-			fmt.Printf("Cannot evaluate expression with %d arguments, expected 2 \n", len(childs))
-			n.CommulativeEval = parser.False
+			log.Info("Cannot evaluate expression with %d arguments, expected 2", len(childs))
+			n.CommulativeEval = token.False
 		} else {
 
 			first, second, err := util.ConvertToFloat(childs[0].Token, childs[1].Token)
 
 			if err != nil {
-				fmt.Printf("Conversion failed: %s\n", err)
-				n.CommulativeEval = parser.False
+				log.Warn("Conversion failed: %s", err)
+				n.CommulativeEval = token.False
 				return n.CommulativeEval
 			}
 
 			if first < second {
-				n.CommulativeEval = parser.True
+				n.CommulativeEval = token.True
 			} else {
-				n.CommulativeEval = parser.False
+				n.CommulativeEval = token.False
 			}
 
-			fmt.Printf(
-				"Evaluating [ (%s) %v %s (%s) %v ] -> %v \n",
+			log.Info(
+				"Evaluating [ (%s) %v %s (%s) %v ] -> %v",
 				reflect.TypeOf(first),
 				first,
 				n.Token,
@@ -48,5 +48,5 @@ var lessThanOperator = OperatorRunnable{
 }
 
 func init() {
-	operatorMap[LessThan] = lessThanOperator
+	OperatorMap["<"] = lessThanOperator
 }

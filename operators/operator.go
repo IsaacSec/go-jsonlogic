@@ -1,56 +1,22 @@
 package operators
 
-import (
-	"fmt"
-	"reflect"
-
-	"github.com/IsaacSec/go-jsonlogic/parser"
-)
-
-type OperatorToken string
+import "github.com/IsaacSec/go-jsonlogic/parser/token"
 
 type OperatorRunnable struct {
-	Token    OperatorToken
-	Evaluate func(n *parser.Node) parser.EvalResult
+	Token    string
+	Evaluate func(n *token.Node) token.EvalResult
 }
 
-const (
-	And                 OperatorToken = "and"
-	Or                  OperatorToken = "or"
-	Equals              OperatorToken = "=="
-	NotEquals           OperatorToken = "!="
-	LessThan            OperatorToken = "<"
-	LessOrEqualsThan    OperatorToken = "<="
-	GreaterThan         OperatorToken = ">"
-	GreaterOrEqualsThan OperatorToken = ">="
-)
+var OperatorMap map[string]OperatorRunnable = make(map[string]OperatorRunnable)
 
-var operatorMap map[OperatorToken]OperatorRunnable = make(map[OperatorToken]OperatorRunnable)
+func Run(n *token.Node) token.EvalResult {
 
-func ToOperator(t parser.Token) OperatorToken {
-	switch t {
-	case string(And):
-		return And
-	case string(Or):
-		return Or
-	case string(Equals):
-		return Equals
-	case string(NotEquals):
-		return NotEquals
-	default:
-		fmt.Printf("invalid token '%v' type '%s' for operator \n", t, reflect.TypeOf(t))
-		return ""
-	}
-}
-
-func Run(n *parser.Node) parser.EvalResult {
-
-	operator, ok := operatorMap[ToOperator(n.Token)]
+	operator, ok := OperatorMap[n.Token.(string)]
 
 	if ok {
 		n.CommulativeEval = operator.Evaluate(n)
 	} else {
-		n.CommulativeEval = parser.False
+		n.CommulativeEval = token.False
 	}
 
 	return n.CommulativeEval

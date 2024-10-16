@@ -3,7 +3,7 @@ package operators
 import (
 	"testing"
 
-	"github.com/IsaacSec/go-jsonlogic/parser"
+	"github.com/IsaacSec/go-jsonlogic/parser/token"
 )
 
 /***********************
@@ -14,21 +14,21 @@ import (
 func TestEqualsOnSameTypeAndValue(t *testing.T) {
 	expression := buildSimpleExp("==", 53, 53)
 
-	assertExpression(t, expression, equalsOperator, parser.True)
+	assertExpression(t, expression, equalsOperator, token.True)
 }
 
 // EQUALS evaluation, different type equal value -> 53 == "53"
 func TestEqualsOnDiffType(t *testing.T) {
 	expression := buildSimpleExp("==", 53, "fifty three")
 
-	assertExpression(t, expression, equalsOperator, parser.False)
+	assertExpression(t, expression, equalsOperator, token.False)
 }
 
 // EQUALS evaluation, different value -> 3421 == -123
 func TestEqualsOnDiffValue(t *testing.T) {
 	expression := buildSimpleExp("==", 3421, -123)
 
-	assertExpression(t, expression, equalsOperator, parser.False)
+	assertExpression(t, expression, equalsOperator, token.False)
 }
 
 // Todo: Add conversion type when possible i.e. -> 1 == "1" == 1.0
@@ -37,7 +37,7 @@ func TestEqualsOnDiffValue(t *testing.T) {
 func TestEqualsOnDiffTypeWithSameValue(t *testing.T) {
 	expression := buildSimpleExp("==", 42, 42.0)
 
-	assertExpression(t, expression, equalsOperator, parser.False)
+	assertExpression(t, expression, equalsOperator, token.False)
 }
 
 /***********************
@@ -48,14 +48,14 @@ func TestEqualsOnDiffTypeWithSameValue(t *testing.T) {
 func TestNotEqualsWithDiffValue(t *testing.T) {
 	expression := buildSimpleExp("!=", 35, 53)
 
-	assertExpression(t, expression, notEqualsEvaluator, parser.True)
+	assertExpression(t, expression, notEqualsEvaluator, token.True)
 }
 
 // NOT EQUALS evaluation, same type and equal value -> 53 != 53
 func TestNotEqualsWithSameValue(t *testing.T) {
 	expression := buildSimpleExp("!=", 53, 53)
 
-	assertExpression(t, expression, notEqualsEvaluator, parser.False)
+	assertExpression(t, expression, notEqualsEvaluator, token.False)
 }
 
 /***********************
@@ -68,43 +68,43 @@ func TestAndWithEmptyList(t *testing.T) {
 		"and",
 	)
 
-	assertExpression(t, expression, andOperator, parser.True)
+	assertExpression(t, expression, andOperator, token.True)
 }
 
 // AND evaluation, one true and multiple false -> [true, false, false] = false
 func TestAndWithMultipleFalseAndAtLeastOneTrue(t *testing.T) {
 	expression := buildGroupExp(
 		"and",
-		parser.True,
-		parser.False,
-		parser.False,
+		token.True,
+		token.False,
+		token.False,
 	)
 
-	assertExpression(t, expression, andOperator, parser.False)
+	assertExpression(t, expression, andOperator, token.False)
 }
 
 // AND evaluation, all true -> [true, true, true] = true
 func TestAndWithAllTrue(t *testing.T) {
 	expression := buildGroupExp(
 		"and",
-		parser.True,
-		parser.True,
-		parser.True,
+		token.True,
+		token.True,
+		token.True,
 	)
 
-	assertExpression(t, expression, andOperator, parser.True)
+	assertExpression(t, expression, andOperator, token.True)
 }
 
 // AND evaluation, all false -> [false, false, false] = false
 func TestAndWithAllFalse(t *testing.T) {
 	expression := buildGroupExp(
 		"and",
-		parser.False,
-		parser.False,
-		parser.False,
+		token.False,
+		token.False,
+		token.False,
 	)
 
-	assertExpression(t, expression, andOperator, parser.False)
+	assertExpression(t, expression, andOperator, token.False)
 }
 
 /***********************
@@ -117,80 +117,80 @@ func TestOrWithEmptyList(t *testing.T) {
 		"or",
 	)
 
-	assertExpression(t, expression, orEvaluator, parser.True)
+	assertExpression(t, expression, orEvaluator, token.True)
 }
 
 // OR evaluation, one true and multiple false -> [false, true, false] = true
 func TestOrWithMultipleFalseAndAtLeastOneTrue(t *testing.T) {
 	expression := buildGroupExp(
 		"or",
-		parser.False,
-		parser.True,
-		parser.False,
+		token.False,
+		token.True,
+		token.False,
 	)
 
-	assertExpression(t, expression, orEvaluator, parser.True)
+	assertExpression(t, expression, orEvaluator, token.True)
 }
 
 // AND evaluation, all true -> [true, true, true] = true
 func TestOrWithAllTrue(t *testing.T) {
 	expression := buildGroupExp(
 		"or",
-		parser.True,
-		parser.True,
-		parser.True,
+		token.True,
+		token.True,
+		token.True,
 	)
 
-	assertExpression(t, expression, orEvaluator, parser.True)
+	assertExpression(t, expression, orEvaluator, token.True)
 }
 
 // AND evaluation, all false -> [false, false, false] = false
 func TestOrWithAllFalse(t *testing.T) {
 	expression := buildGroupExp(
 		"or",
-		parser.False,
-		parser.False,
-		parser.False,
+		token.False,
+		token.False,
+		token.False,
 	)
 
-	assertExpression(t, expression, orEvaluator, parser.False)
+	assertExpression(t, expression, orEvaluator, token.False)
 }
 
-func buildGroupExp(op parser.Token, results ...parser.EvalResult) parser.Node {
-	var expressions = make([]parser.Node, len(results))
+func buildGroupExp(op token.Token, results ...token.EvalResult) token.Node {
+	var expressions = make([]*token.Node, len(results))
 
 	for i, res := range results {
-		expressions[i] = parser.Node{
+		expressions[i] = &token.Node{
 			Token:           res.ToString() == "True",
 			CommulativeEval: res,
-			Kind:            parser.PrimitiveVal,
+			Kind:            token.PrimitiveVal,
 			Childrens:       nil,
 		}
 	}
 
-	var group = parser.Node{Token: op, Kind: parser.Operator, Childrens: &expressions}
+	var group = token.Node{Token: op, Kind: token.Operator, Childrens: expressions}
 
 	return group
 }
 
-func buildSimpleExp(op parser.Token, a parser.Token, b parser.Token) parser.Node {
-	return parser.Node{
+func buildSimpleExp(op token.Token, a token.Token, b token.Token) token.Node {
+	return token.Node{
 		Token: op,
-		Kind:  parser.Operator,
-		Childrens: &[]parser.Node{
+		Kind:  token.Operator,
+		Childrens: []*token.Node{
 			{
 				Token: a,
-				Kind:  parser.PrimitiveVal,
+				Kind:  token.PrimitiveVal,
 			},
 			{
 				Token: b,
-				Kind:  parser.PrimitiveVal,
+				Kind:  token.PrimitiveVal,
 			},
 		},
 	}
 }
 
-func assertExpression(t *testing.T, exp parser.Node, evaluator OperatorRunnable, expected parser.EvalResult) {
+func assertExpression(t *testing.T, exp token.Node, evaluator OperatorRunnable, expected token.EvalResult) {
 	res := evaluator.Evaluate(&exp)
 
 	if res != expected {

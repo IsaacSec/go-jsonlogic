@@ -1,4 +1,4 @@
-package parser
+package token
 
 type Kind int
 type EvalResult int
@@ -11,7 +11,8 @@ const (
 )
 
 const (
-	PrimitiveVal Kind = iota + 1
+	Null Kind = iota + 1
+	PrimitiveVal
 	ReferenceVal
 	Operator
 	Array
@@ -23,7 +24,7 @@ type Node struct {
 	Token           Token
 	Kind            Kind
 	CommulativeEval EvalResult
-	Childrens       *[]Node
+	Childrens       []*Node
 }
 
 func (er EvalResult) ToString() string {

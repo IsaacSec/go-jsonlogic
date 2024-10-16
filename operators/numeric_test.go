@@ -3,7 +3,7 @@ package operators
 import (
 	"testing"
 
-	"github.com/IsaacSec/go-jsonlogic/parser"
+	"github.com/IsaacSec/go-jsonlogic/parser/token"
 )
 
 /***********************
@@ -14,12 +14,12 @@ import (
 func TestLessThanOnSameTypeExpectedTrue(t *testing.T) {
 	expression := buildSimpleExp("<", 40, 50)
 
-	assertExpression(t, expression, lessThanOperator, parser.True)
+	assertExpression(t, expression, lessThanOperator, token.True)
 }
 
 // LESS THAN evaluation, same type equal value -> 50 < 40
 func TestLessThanOnSameTypeExpectedFalse(t *testing.T) {
 	expression := buildSimpleExp("<", 50, 40)
 
-	assertExpression(t, expression, lessThanOperator, parser.False)
+	assertExpression(t, expression, lessThanOperator, token.False)
 }
