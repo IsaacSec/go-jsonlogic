@@ -19,10 +19,14 @@ func (t Tree) Flatten() []*token.Node {
 	var Add func(n *token.Node)
 
 	Add = func(n *token.Node) {
+
 		for i := range n.Childrens {
 			child := n.Childrens[i]
-			flattened = append(flattened, child)
-			Add(child)
+
+			if child != nil {
+				flattened = append(flattened, child)
+				Add(child)
+			}
 		}
 	}
 

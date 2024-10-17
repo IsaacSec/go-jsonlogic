@@ -69,6 +69,7 @@ func parseValue(value interface{}) *token.Node {
 		node := &token.Node{
 			Kind:      token.Array,
 			Childrens: make([]*token.Node, len(val)),
+			Token:     val,
 		}
 		for _, v := range val {
 			// Recursion (DFS) to parse every node
@@ -78,6 +79,6 @@ func parseValue(value interface{}) *token.Node {
 	case string, float64, bool, int:
 		return &token.Node{Kind: token.PrimitiveVal, Token: val}
 	default:
-		return &token.Node{Kind: token.Null}
+		return &token.Node{Kind: token.Null, Token: nil}
 	}
 }
