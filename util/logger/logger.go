@@ -1,39 +1,92 @@
 package logger
 
 import (
+	"context"
 	"fmt"
+	"io"
 	"log/slog"
+	"os"
 )
 
-// ANSI color codes
-const (
-	Reset  = "\033[0m"
-	Red    = "\033[31m"
-	Green  = "\033[32m"
-	Yellow = "\033[33m"
-	Blue   = "\033[34m"
-)
+type CustomHandler struct {
+	out io.Writer
+}
+
+func (h *CustomHandler) Handle(ctx context.Context, r slog.Record) error {
+	level := r.Level.String()
+	timeStr := r.Time.Format("2006-01-02 15:04:05")
+
+	var levelColor string
+	switch r.Level {
+	case slog.LevelInfo:
+		levelColor = "\033[34m" // Blue
+	case slog.LevelWarn:
+		levelColor = "\033[33m" // Yellow
+	case slog.LevelError:
+		levelColor = "\033[31m" // Red
+	default:
+		levelColor = "\033[0m" // Default color
+	}
+
+	timeColor := "\033[90m" // Grey
+	resetColor := "\033[0m"
+
+	fmt.Fprintf(h.out, "%s%s%s [%s%s%s] %s",
+		timeColor, timeStr, resetColor,
+		levelColor, level, resetColor,
+		r.Message)
+
+	// Handle additional attributes
+	if r.NumAttrs() > 0 {
+		fmt.Fprint(h.out, " {")
+		r.Attrs(func(a slog.Attr) bool {
+			fmt.Fprintf(h.out, "%s: %v, ", a.Key, a.Value)
+			return true
+		})
+		fmt.Fprint(h.out, "}")
+	}
+
+	fmt.Fprintln(h.out) // Add a newline at the end
+	return nil
+}
+
+func (h *CustomHandler) WithAttrs(attrs []slog.Attr) slog.Handler {
+	return h // For simplicity, we're not handling WithAttrs
+}
+
+func (h *CustomHandler) WithGroup(name string) slog.Handler {
+	return h // For simplicity, we're not handling WithGroup
+}
+
+func (h *CustomHandler) Enabled(ctx context.Context, level slog.Level) bool {
+	return true // Enable all levels
+}
+
+func NewCustomLogger() *slog.Logger {
+	handler := &CustomHandler{
+		out: os.Stdout,
+	}
+	return slog.New(handler)
+}
 
 var (
 	logger *slog.Logger
 )
 
 func init() {
+	logger = NewCustomLogger()
 
-	logger = slog.New(slog.Default().Handler())
+	slog.SetDefault(logger)
 }
 
 func Info(s string, v ...any) {
-	prefix := Blue + "[INFO] " + Reset
-	logger.Info(fmt.Sprintf(prefix+s, v...))
+	logger.Info(fmt.Sprintf(s, v...))
 }
 
 func Warn(s string, v ...any) {
-	prefix := Yellow + "[WARN] " + Reset
-	logger.Warn(fmt.Sprintf(prefix+s, v...))
+	logger.Warn(fmt.Sprintf(s, v...))
 }
 
 func Error(s string, v ...any) {
-	prefix := Red + "[ERROR] " + Reset
-	logger.Error(fmt.Sprintf(prefix+s, v...))
+	logger.Error(fmt.Sprintf(s, v...))
 }

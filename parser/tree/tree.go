@@ -37,10 +37,6 @@ func (t Tree) Flatten() []*token.Node {
 }
 
 func eval(n *token.Node) token.EvalNode {
-	// Checking
-	// if n.CommulativeEval != token.Undefined {
-	// 	return n.CommulativeEval
-	// }
 
 	// Todo: check that adresses are different
 	new := token.EvalNode{
@@ -48,8 +44,6 @@ func eval(n *token.Node) token.EvalNode {
 		Kind:   n.Kind,
 		Result: false,
 	}
-
-	//log.Info("Node: %v, children: %v", n.Token, n.Childrens)
 
 	if n.Childrens == nil { // This is a leaf node, Todo: what happens of null value tokens
 		new.Result = n.Token
