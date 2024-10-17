@@ -1,30 +1,21 @@
 package util
 
 import (
-	"fmt"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestFloatConversionWithIncompatibleValues(t *testing.T) {
-	a, b, err := ConvertToFloat("one", 45)
+	_, _, err := ConvertToFloat("one", 45)
 
-	fmt.Printf("Values: %v %v %v\n", a, b, err)
-
-	if err == nil {
-		t.Errorf("Expected error on invalid conversion\n")
-	}
+	assert.Error(t, err, "expected error on invalid conversion")
 }
 
 func TestFloatConversionWithSameType(t *testing.T) {
 	a, b, err := ConvertToFloat(123, "123.33")
 
-	fmt.Printf("Values: %v %v %v\n", a, b, err)
-
-	if err != nil {
-		t.Errorf("Unexpected error: %s\n", err)
-	}
-
-	if a != 123.0 || b != 123.33 {
-		t.Errorf("Conversion error: expected %v,%v but got %v,%v\n", 123.0, 123.33, a, b)
-	}
+	assert.NoError(t, err)
+	assert.Equal(t, 123.0, a)
+	assert.Equal(t, 123.33, b)
 }

@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/IsaacSec/go-jsonlogic/parser/token"
+	"github.com/stretchr/testify/assert"
 )
 
 /*
@@ -37,9 +38,7 @@ func TestTree(t *testing.T) {
 
 	tree.Root = &token.Node{Token: "and", Kind: token.Operator, Childrens: expression}
 
-	if tree.Eval() == false {
-		t.Errorf("Expected true %+v", tree.Root)
-	}
+	assert.Equal(t, true, tree.Eval())
 }
 
 /*
@@ -88,7 +87,5 @@ func TestFalseTree(t *testing.T) {
 
 	tree.Root = &token.Node{Token: "and", Kind: token.Operator, Childrens: expression}
 
-	if tree.Eval() == true {
-		t.Errorf("Expected true %+v", tree.Root)
-	}
+	assert.Equal(t, false, tree.Eval())
 }

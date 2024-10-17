@@ -9,6 +9,7 @@ import (
 	"github.com/IsaacSec/go-jsonlogic/parser/token"
 	"github.com/IsaacSec/go-jsonlogic/parser/tree"
 	"github.com/IsaacSec/go-jsonlogic/util/maps"
+	"github.com/stretchr/testify/assert"
 )
 
 // Test all listed operators by default
@@ -25,9 +26,7 @@ func TestParseOperators(t *testing.T) {
 		}
 	`))
 
-	if err != nil {
-		t.Errorf("Unexpected error: %s", err)
-	}
+	assert.NoError(t, err, "pasing json error")
 
 	nodes := tree.Tree{Root: root}.Flatten()
 	found := make(map[string]bool, 0)
@@ -39,12 +38,7 @@ func TestParseOperators(t *testing.T) {
 		}
 	}
 
-	for key := range operators.OperatorMap {
-		if _, ok := found[key]; !ok {
-			t.Errorf("Missing operator '%v', found: %v, expected: %+v\n", key, maps.GetKeys(found), maps.GetKeys(operators.OperatorMap))
-			break
-		}
-	}
+	assert.ElementsMatch(t, maps.GetKeys(found), maps.GetKeys(operators.OperatorMap), "operator missing")
 }
 
 // Test parsing strings
@@ -58,9 +52,7 @@ func TestParseStringValues(t *testing.T) {
 		}
 	`))
 
-	if err != nil {
-		t.Errorf("Unexpected error: %s", err)
-	}
+	assert.NoError(t, err, "pasing json error")
 
 	nodes := tree.Tree{Root: root}.Flatten()
 	assertExpectedTokens(t, nodes, token.PrimitiveVal, "one", "", "12312", "-$%&*4")
@@ -78,9 +70,7 @@ func TestParseNumericValues(t *testing.T) {
 		}
 	`))
 
-	if err != nil {
-		t.Errorf("Unexpected error: %s", err)
-	}
+	assert.NoError(t, err, "pasing json error")
 
 	nodes := tree.Tree{Root: root}.Flatten()
 	assertExpectedTokens(t, nodes, token.PrimitiveVal, 5624.0, 54.23, -1.0, 0.0)
@@ -97,18 +87,14 @@ func TestParseArraysValues(t *testing.T) {
 		}
 	`))
 
-	if err != nil {
-		t.Errorf("Unexpected error: %s", err)
-	}
+	assert.NoError(t, err, "pasing json error")
 
 	nodes := tree.Tree{Root: root}.Flatten()
 
 	fmt.Printf("%v\n", getNodeValues(nodes))
 
 	// Cannot compare arrays
-	if len(nodes) != 11 {
-		t.Errorf("Expected 11 tokens but got %v", len(nodes))
-	}
+	assert.Equal(t, 11, len(nodes), "incorrect number of nodes identified in json")
 }
 
 // Test parsing null values
@@ -121,9 +107,7 @@ func TestParseNullValues(t *testing.T) {
 		}
 	`))
 
-	if err != nil {
-		t.Errorf("Unexpected error: %s", err)
-	}
+	assert.NoError(t, err, "pasing json error")
 
 	nodes := tree.Tree{Root: root}.Flatten()
 
@@ -131,22 +115,16 @@ func TestParseNullValues(t *testing.T) {
 		return n.Kind == token.Null && !(n.Token != nil)
 	})
 
-	if !exists {
-		t.Errorf("Expected tokens: %v, node list: %v", nil, getNodeValues(nodes))
-	}
+	assert.True(t, exists, fmt.Sprintf("Expected tokens: %v, node list: %v", nil, getNodeValues(nodes)))
 }
 
 func assertExpectedTokens[T comparable](t *testing.T, nodes []*token.Node, kind token.Kind, expected ...T) {
 	for _, value := range expected {
 		exists := slices.ContainsFunc(nodes, func(n *token.Node) bool {
-			//fmt.Printf("Kind: %v - %v, Token: %v - %v -> %v %v\n", n.Kind, kind, n.Token, value, n.Kind == kind, n.Token == value)
 			return n.Kind == kind && n.Token == value
 		})
 
-		if !exists {
-			t.Errorf("Expected tokens: %v, node list: %v", value, getNodeValues(nodes))
-			break
-		}
+		assert.True(t, exists, fmt.Sprintf("Expected tokens: %v, node list: %v", nil, getNodeValues(nodes)))
 	}
 }
 

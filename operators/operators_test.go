@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/IsaacSec/go-jsonlogic/parser/token"
+	"github.com/stretchr/testify/assert"
 )
 
 /*
@@ -67,9 +68,7 @@ func buildSimpleExp(op token.Token, a token.Token, b token.Token) token.EvalNode
 }
 
 func assertExpression(t *testing.T, exp token.EvalNode, evaluator OperatorRunnable, expected token.Result) {
-	res := evaluator.Evaluate(&exp)
+	actual := evaluator.Evaluate(&exp)
 
-	if res != expected {
-		t.Errorf("Expected %v but got '%v'", expected, res)
-	}
+	assert.Equal(t, expected, actual)
 }
