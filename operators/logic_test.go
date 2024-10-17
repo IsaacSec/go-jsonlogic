@@ -14,21 +14,21 @@ import (
 func TestEqualsOnSameTypeAndValue(t *testing.T) {
 	expression := buildSimpleExp("==", 53, 53)
 
-	assertExpression(t, expression, equalsOperator, token.True)
+	assertExpression(t, expression, equalsOperator, true)
 }
 
 // EQUALS evaluation, different type equal value -> 53 == "53"
 func TestEqualsOnDiffType(t *testing.T) {
 	expression := buildSimpleExp("==", 53, "fifty three")
 
-	assertExpression(t, expression, equalsOperator, token.False)
+	assertExpression(t, expression, equalsOperator, false)
 }
 
 // EQUALS evaluation, different value -> 3421 == -123
 func TestEqualsOnDiffValue(t *testing.T) {
 	expression := buildSimpleExp("==", 3421, -123)
 
-	assertExpression(t, expression, equalsOperator, token.False)
+	assertExpression(t, expression, equalsOperator, false)
 }
 
 // Todo: Add conversion type when possible i.e. -> 1 == "1" == 1.0
@@ -37,7 +37,7 @@ func TestEqualsOnDiffValue(t *testing.T) {
 func TestEqualsOnDiffTypeWithSameValue(t *testing.T) {
 	expression := buildSimpleExp("==", 42, 42.0)
 
-	assertExpression(t, expression, equalsOperator, token.False)
+	assertExpression(t, expression, equalsOperator, false)
 }
 
 /***********************
@@ -48,14 +48,14 @@ func TestEqualsOnDiffTypeWithSameValue(t *testing.T) {
 func TestNotEqualsWithDiffValue(t *testing.T) {
 	expression := buildSimpleExp("!=", 35, 53)
 
-	assertExpression(t, expression, notEqualsEvaluator, token.True)
+	assertExpression(t, expression, notEqualsEvaluator, true)
 }
 
 // NOT EQUALS evaluation, same type and equal value -> 53 != 53
 func TestNotEqualsWithSameValue(t *testing.T) {
 	expression := buildSimpleExp("!=", 53, 53)
 
-	assertExpression(t, expression, notEqualsEvaluator, token.False)
+	assertExpression(t, expression, notEqualsEvaluator, false)
 }
 
 /***********************
@@ -68,43 +68,43 @@ func TestAndWithEmptyList(t *testing.T) {
 		"and",
 	)
 
-	assertExpression(t, expression, andOperator, token.True)
+	assertExpression(t, expression, andOperator, true)
 }
 
 // AND evaluation, one true and multiple false -> [true, false, false] = false
 func TestAndWithMultipleFalseAndAtLeastOneTrue(t *testing.T) {
 	expression := buildGroupExp(
 		"and",
-		token.True,
-		token.False,
-		token.False,
+		true,
+		false,
+		false,
 	)
 
-	assertExpression(t, expression, andOperator, token.False)
+	assertExpression(t, expression, andOperator, false)
 }
 
 // AND evaluation, all true -> [true, true, true] = true
 func TestAndWithAllTrue(t *testing.T) {
 	expression := buildGroupExp(
 		"and",
-		token.True,
-		token.True,
-		token.True,
+		true,
+		true,
+		true,
 	)
 
-	assertExpression(t, expression, andOperator, token.True)
+	assertExpression(t, expression, andOperator, true)
 }
 
 // AND evaluation, all false -> [false, false, false] = false
 func TestAndWithAllFalse(t *testing.T) {
 	expression := buildGroupExp(
 		"and",
-		token.False,
-		token.False,
-		token.False,
+		false,
+		false,
+		false,
 	)
 
-	assertExpression(t, expression, andOperator, token.False)
+	assertExpression(t, expression, andOperator, false)
 }
 
 /***********************
@@ -117,83 +117,85 @@ func TestOrWithEmptyList(t *testing.T) {
 		"or",
 	)
 
-	assertExpression(t, expression, orEvaluator, token.True)
+	assertExpression(t, expression, orEvaluator, true)
 }
 
 // OR evaluation, one true and multiple false -> [false, true, false] = true
 func TestOrWithMultipleFalseAndAtLeastOneTrue(t *testing.T) {
 	expression := buildGroupExp(
 		"or",
-		token.False,
-		token.True,
-		token.False,
+		false,
+		true,
+		false,
 	)
 
-	assertExpression(t, expression, orEvaluator, token.True)
+	assertExpression(t, expression, orEvaluator, true)
 }
 
 // AND evaluation, all true -> [true, true, true] = true
 func TestOrWithAllTrue(t *testing.T) {
 	expression := buildGroupExp(
 		"or",
-		token.True,
-		token.True,
-		token.True,
+		true,
+		true,
+		true,
 	)
 
-	assertExpression(t, expression, orEvaluator, token.True)
+	assertExpression(t, expression, orEvaluator, true)
 }
 
 // AND evaluation, all false -> [false, false, false] = false
 func TestOrWithAllFalse(t *testing.T) {
 	expression := buildGroupExp(
 		"or",
-		token.False,
-		token.False,
-		token.False,
+		false,
+		false,
+		false,
 	)
 
-	assertExpression(t, expression, orEvaluator, token.False)
+	assertExpression(t, expression, orEvaluator, false)
 }
 
-func buildGroupExp(op token.Token, results ...token.EvalResult) token.Node {
-	var expressions = make([]*token.Node, len(results))
+func buildGroupExp(op token.Token, results ...token.Result) token.EvalNode {
+	var expressions = make([]*token.EvalNode, len(results))
 
 	for i, res := range results {
-		expressions[i] = &token.Node{
-			Token:           res.ToString() == "True",
-			CommulativeEval: res,
-			Kind:            token.PrimitiveVal,
-			Childrens:       nil,
+		expressions[i] = &token.EvalNode{
+			Token:     res,
+			Result:    res,
+			Kind:      token.PrimitiveVal,
+			Childrens: nil,
 		}
 	}
 
-	var group = token.Node{Token: op, Kind: token.Operator, Childrens: expressions}
+	var group = token.EvalNode{Token: op, Kind: token.Operator, Childrens: expressions}
 
 	return group
 }
 
-func buildSimpleExp(op token.Token, a token.Token, b token.Token) token.Node {
-	return token.Node{
+func buildSimpleExp(op token.Token, a token.Token, b token.Token) token.EvalNode {
+	return token.EvalNode{
 		Token: op,
 		Kind:  token.Operator,
-		Childrens: []*token.Node{
+		Childrens: []*token.EvalNode{
 			{
-				Token: a,
-				Kind:  token.PrimitiveVal,
+				Token:  a,
+				Kind:   token.PrimitiveVal,
+				Result: a,
 			},
 			{
-				Token: b,
-				Kind:  token.PrimitiveVal,
+				Token:  b,
+				Kind:   token.PrimitiveVal,
+				Result: b,
 			},
 		},
 	}
 }
 
-func assertExpression(t *testing.T, exp token.Node, evaluator OperatorRunnable, expected token.EvalResult) {
+func assertExpression(t *testing.T, exp token.EvalNode, evaluator OperatorRunnable, expected token.Result) {
 	res := evaluator.Evaluate(&exp)
 
 	if res != expected {
-		t.Errorf("Expected %v but got '%v'", expected.ToString(), res.ToString())
+		t.Errorf("Expected %v but got '%v'", expected, res)
 	}
 }

@@ -34,6 +34,6 @@ func Warn(s string, v ...any) {
 }
 
 func Error(s string, v ...any) {
-	prefix := Red + "[WARN] " + Reset
+	prefix := Red + "[ERROR] " + Reset
 	logger.Error(fmt.Sprintf(prefix+s, v...))
 }

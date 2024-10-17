@@ -26,6 +26,23 @@ func toFloat(value any) (res float64, err error) {
 	return res, err
 }
 
+func ToBool(value any) (res bool, err error) {
+	switch v := any(value).(type) {
+	case int:
+		res = v > 0
+	case float64:
+		res = v > 0
+	case string:
+		res = v != ""
+	case bool:
+		res = v
+	default:
+		return false, fmt.Errorf("unsupported type: %T", v)
+	}
+
+	return res, err
+}
+
 func ConvertToFloat(a any, b any) (ia float64, ib float64, err error) {
 
 	defer func() {

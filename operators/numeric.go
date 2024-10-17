@@ -10,27 +10,23 @@ import (
 
 var lessThanOperator = OperatorRunnable{
 	Token: "<",
-	Evaluate: func(n *token.Node) token.EvalResult {
+	Evaluate: func(n *token.EvalNode) (res token.Result) {
 		childs := n.Childrens
 
 		if len(childs) != 2 {
 			log.Info("Cannot evaluate expression with %d arguments, expected 2", len(childs))
-			n.CommulativeEval = token.False
+			res = false
 		} else {
 
-			first, second, err := util.ConvertToFloat(childs[0].Token, childs[1].Token)
+			first, second, err := util.ConvertToFloat(childs[0].Result, childs[1].Result)
 
 			if err != nil {
 				log.Warn("Conversion failed: %s", err)
-				n.CommulativeEval = token.False
-				return n.CommulativeEval
+				res = false
+				return res
 			}
 
-			if first < second {
-				n.CommulativeEval = token.True
-			} else {
-				n.CommulativeEval = token.False
-			}
+			res = first < second
 
 			log.Info(
 				"Evaluating [ (%s) %v %s (%s) %v ] -> %v",
@@ -39,11 +35,11 @@ var lessThanOperator = OperatorRunnable{
 				n.Token,
 				reflect.TypeOf(second),
 				second,
-				n.CommulativeEval.ToString(),
+				res,
 			)
 		}
 
-		return n.CommulativeEval
+		return res
 	},
 }
 

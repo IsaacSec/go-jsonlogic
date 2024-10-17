@@ -11,10 +11,11 @@ type Tree struct {
 }
 
 func (t Tree) Eval() bool {
-	return eval(t.Root) == token.True
+	return eval(t.Root).ToBool()
 }
 
 func (t Tree) Flatten() []*token.Node {
+	// Start by adding root node
 	var flattened = []*token.Node{t.Root}
 	var Add func(n *token.Node)
 
@@ -35,30 +36,46 @@ func (t Tree) Flatten() []*token.Node {
 	return flattened
 }
 
-func eval(n *token.Node) token.EvalResult {
-	if n.CommulativeEval != token.Undefined {
-		return n.CommulativeEval
+func eval(n *token.Node) token.EvalNode {
+	// Checking
+	// if n.CommulativeEval != token.Undefined {
+	// 	return n.CommulativeEval
+	// }
+
+	// Todo: check that adresses are different
+	new := token.EvalNode{
+		Token:  n.Token,
+		Kind:   n.Kind,
+		Result: false,
 	}
 
-	if n.Childrens == nil {
-		n.CommulativeEval = token.False
-		return n.CommulativeEval
+	//log.Info("Node: %v, children: %v", n.Token, n.Childrens)
+
+	if n.Childrens == nil { // This is a leaf node, Todo: what happens of null value tokens
+		new.Result = n.Token
+		return new
 	} else {
+		var children []*token.EvalNode
+
 		for i := range n.Childrens {
 			child := n.Childrens[i]
-			eval(child)
+			newChild := eval(child)
+			children = append(children, &newChild)
 		}
+
+		new.Childrens = children
 	}
 
+	// Node has children
 	switch kind := n.Kind; kind {
 	case token.Operator:
-		n.CommulativeEval = op.Run(n)
+		new.Result = op.Run(&new)
 
 	default:
-		n.CommulativeEval = token.False
+		new.Result = false
 	}
 
-	log.Info("Token [%v] result: %v", n.Token, n.CommulativeEval.ToString())
+	log.Info("Token [%v] result: %v", new.Token, new.Result)
 
-	return n.CommulativeEval
+	return new
 }

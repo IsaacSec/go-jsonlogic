@@ -9,71 +9,69 @@ import (
 
 var andOperator = OperatorRunnable{
 	Token: "and",
-	Evaluate: func(n *token.Node) token.EvalResult {
+	Evaluate: func(n *token.EvalNode) token.Result {
 		childs := n.Childrens
+		// Default value on empty "and"
+		res := true
 
-		n.CommulativeEval = token.True
 		for i := range childs {
 			child := childs[i]
 
 			log.Info(
 				"Evaluating exp [%v][ %v ]",
 				i,
-				child.CommulativeEval.ToString(),
+				child.Result,
 			)
 
-			if child.CommulativeEval == token.False {
-				n.CommulativeEval = token.False
-				break
+			if !child.ToBool() {
+				res = false
 			}
 		}
 
-		return n.CommulativeEval
+		return res
 	},
 }
 
 var orEvaluator = OperatorRunnable{
 	Token: "or",
-	Evaluate: func(n *token.Node) token.EvalResult {
+	Evaluate: func(n *token.EvalNode) token.Result {
 		childs := n.Childrens
+		// Default value on empty "and"
+		var res token.Result
 
 		if len(childs) > 0 {
-			n.CommulativeEval = token.False
+			res = false
 		} else {
-			n.CommulativeEval = token.True
+			res = true
 		}
 
 		for i := range childs {
 			child := childs[i]
 
-			if child.CommulativeEval == token.True {
-				n.CommulativeEval = token.True
-				break
+			if child.ToBool() {
+				res = true
+				//break
 			}
 		}
 
-		return n.CommulativeEval
+		return res
 	},
 }
 
 var equalsOperator = OperatorRunnable{
 	Token: "==",
-	Evaluate: func(n *token.Node) token.EvalResult {
+	Evaluate: func(n *token.EvalNode) (res token.Result) {
 		childs := n.Childrens
 
 		if len(childs) != 2 {
 			log.Info("Cannot evaluate expression with %d arguments, expected 2", len(childs))
-			n.CommulativeEval = token.False
+			res = false
 		} else {
 
-			first := childs[0].Token
-			second := childs[1].Token
+			first := childs[0].Result
+			second := childs[1].Result
 
-			if first == second {
-				n.CommulativeEval = token.True
-			} else {
-				n.CommulativeEval = token.False
-			}
+			res = first == second
 
 			log.Info(
 				"Evaluating [ (%s) %v == (%s) %v ] -> %v",
@@ -81,32 +79,28 @@ var equalsOperator = OperatorRunnable{
 				first,
 				reflect.TypeOf(second),
 				second,
-				n.CommulativeEval.ToString(),
+				res,
 			)
 		}
 
-		return n.CommulativeEval
+		return res
 	},
 }
 
 var notEqualsEvaluator = OperatorRunnable{
 	Token: "!=",
-	Evaluate: func(n *token.Node) token.EvalResult {
+	Evaluate: func(n *token.EvalNode) (res token.Result) {
 		childs := n.Childrens
 
 		if len(childs) != 2 {
 			log.Info("Cannot evaluate expression with %d arguments, expected 2", len(childs))
-			n.CommulativeEval = token.False
+			res = false
 		} else {
 
-			first := childs[0].Token
-			second := childs[1].Token
+			first := childs[0].Result
+			second := childs[1].Result
 
-			if first != second {
-				n.CommulativeEval = token.True
-			} else {
-				n.CommulativeEval = token.False
-			}
+			res = first != second
 
 			log.Info(
 				"Evaluating [ (%s) %v %s (%s) %v ] -> %v",
@@ -115,11 +109,11 @@ var notEqualsEvaluator = OperatorRunnable{
 				n.Token,
 				reflect.TypeOf(second),
 				second,
-				n.CommulativeEval.ToString(),
+				res,
 			)
 		}
 
-		return n.CommulativeEval
+		return res
 	},
 }
 

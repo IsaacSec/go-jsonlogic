@@ -1,23 +1,39 @@
 package operators
 
-import "github.com/IsaacSec/go-jsonlogic/parser/token"
+import (
+	"reflect"
+
+	"github.com/IsaacSec/go-jsonlogic/parser/token"
+	log "github.com/IsaacSec/go-jsonlogic/util/logger"
+)
 
 type OperatorRunnable struct {
 	Token    string
-	Evaluate func(n *token.Node) token.EvalResult
+	Evaluate func(n *token.EvalNode) token.Result
 }
 
 var OperatorMap map[string]OperatorRunnable = make(map[string]OperatorRunnable)
 
-func Run(n *token.Node) token.EvalResult {
+func Run(n *token.EvalNode) token.Result {
 
-	operator, ok := OperatorMap[n.Token.(string)]
+	var res token.Result
 
-	if ok {
-		n.CommulativeEval = operator.Evaluate(n)
-	} else {
-		n.CommulativeEval = token.False
+	switch n.Token.(type) {
+	case string:
+		operator, ok := OperatorMap[n.Token.(string)]
+
+		if ok {
+			res = operator.Evaluate(n)
+		} else {
+			log.Error("Undefined operator %s", n.Token)
+
+			// Todo: change with an error handler
+			res = false // Default on error value
+		}
+
+	default:
+		log.Error("Token [%v] with wrong type [%v]", n.Token, reflect.TypeOf(n.Token))
 	}
 
-	return n.CommulativeEval
+	return res
 }

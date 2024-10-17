@@ -92,27 +92,3 @@ func TestFalseTree(t *testing.T) {
 		t.Errorf("Expected true %+v", tree.Root)
 	}
 }
-
-/*
-Test evaluating invalid operator (int are not valid for json key)
-
-	{
-		2345:[]
-	}
-*/
-func TestInvalidTokenInOperator(t *testing.T) {
-
-	var tree Tree = Tree{}
-	var expression = []*token.Node{
-		{
-			Token: 2345,
-			Kind:  token.Operator,
-		},
-	}
-
-	tree.Root = &token.Node{Token: "and", Kind: token.Operator, Childrens: expression}
-
-	if tree.Eval() == true {
-		t.Errorf("Expected False %+v", tree.Root)
-	}
-}

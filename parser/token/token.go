@@ -1,14 +1,13 @@
 package token
 
-type Kind int
-type EvalResult int
-type Token interface{}
-
-const (
-	Undefined EvalResult = iota
-	True
-	False
+import (
+	"github.com/IsaacSec/go-jsonlogic/util"
+	log "github.com/IsaacSec/go-jsonlogic/util/logger"
 )
+
+type Kind int
+type Token interface{}
+type Result interface{}
 
 const (
 	Null Kind = iota + 1
@@ -21,21 +20,25 @@ const (
 )
 
 type Node struct {
-	Token           Token
-	Kind            Kind
-	CommulativeEval EvalResult
-	Childrens       []*Node
+	Token     Token
+	Kind      Kind
+	Childrens []*Node
 }
 
-func (er EvalResult) ToString() string {
-	switch er {
-	case Undefined:
-		return "Undefined"
-	case True:
-		return "True"
-	case False:
-		return "False"
-	default:
-		return "Undefined"
+type EvalNode struct {
+	Token     Token
+	Kind      Kind
+	Childrens []*EvalNode
+	Result    Result
+}
+
+func (n EvalNode) ToBool() bool {
+	res, err := util.ToBool(n.Result)
+
+	if err != nil {
+		log.Error("Unexpecter bool conversion: %s", err)
+		return false
 	}
+
+	return res
 }
