@@ -7,12 +7,9 @@ import (
 	log "github.com/IsaacSec/go-jsonlogic/util/logger"
 )
 
-type OperatorRunnable struct {
-	Token    string
-	Evaluate func(n *token.EvalNode) token.Result
-}
+type Operator func(token.Args) token.Result
 
-var OperatorMap map[string]OperatorRunnable = make(map[string]OperatorRunnable)
+var Operators map[string]Operator = make(map[string]Operator)
 
 func Run(n *token.EvalNode) token.Result {
 
@@ -20,10 +17,18 @@ func Run(n *token.EvalNode) token.Result {
 
 	switch n.Token.(type) {
 	case string:
-		operator, ok := OperatorMap[n.Token.(string)]
+		evaluate, ok := Operators[n.Token.(string)]
 
 		if ok {
-			res = operator.Evaluate(n)
+			args := n.Args
+			res = evaluate(args)
+
+			log.Info(
+				"Evaluation %s %v -> %v",
+				n.Token,
+				args.GetArgValueAndType(),
+				res,
+			)
 		} else {
 			log.Error("Undefined operator %s", n.Token)
 
@@ -36,4 +41,12 @@ func Run(n *token.EvalNode) token.Result {
 	}
 
 	return res
+}
+
+func init() {
+	Operators["and"] = And
+	Operators["or"] = Or
+	Operators["=="] = Equals
+	Operators["!="] = NotEquals
+	Operators["<"] = LessThan
 }

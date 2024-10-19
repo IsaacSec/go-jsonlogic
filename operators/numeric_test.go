@@ -12,12 +12,12 @@ import (
 func TestLessThanOnSameTypeExpectedTrue(t *testing.T) {
 	expression := buildSimpleExp("<", 40, 50)
 
-	assertExpression(t, expression, lessThanOperator, true)
+	assertExpression(t, expression, true)
 }
 
 // LESS THAN evaluation, same type equal value -> 50 < 40
 func TestLessThanOnSameTypeExpectedFalse(t *testing.T) {
 	expression := buildSimpleExp("<", 50, 40)
 
-	assertExpression(t, expression, lessThanOperator, false)
+	assertExpression(t, expression, false)
 }

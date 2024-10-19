@@ -1,125 +1,78 @@
 package operators
 
 import (
-	"reflect"
-
 	"github.com/IsaacSec/go-jsonlogic/parser/token"
 	log "github.com/IsaacSec/go-jsonlogic/util/logger"
 )
 
-var andOperator = OperatorRunnable{
-	Token: "and",
-	Evaluate: func(n *token.EvalNode) token.Result {
-		childs := n.Childrens
-		// Default value on empty "and"
-		res := true
+func And(args token.Args) (res token.Result) {
+	res = true
 
-		for i := range childs {
-			child := childs[i]
+	for i := range args {
+		arg := args[i]
 
-			log.Info(
-				"Evaluating exp [%v][ %v ]",
-				i,
-				child.Result,
-			)
+		log.Info(
+			"Evaluating exp [%v][ %v ]",
+			i,
+			arg.Result,
+		)
 
-			if !child.ToBool() {
-				res = false
-			}
+		if !arg.ToBool() {
+			res = false
 		}
+	}
 
-		return res
-	},
+	return res
 }
 
-var orEvaluator = OperatorRunnable{
-	Token: "or",
-	Evaluate: func(n *token.EvalNode) token.Result {
-		childs := n.Childrens
-		// Default value on empty "and"
-		var res token.Result
+func Or(args token.Args) (res token.Result) {
 
-		if len(childs) > 0 {
-			res = false
-		} else {
+	if len(args) > 0 {
+		res = false
+	} else { // Default value on empty "and"
+		res = true
+	}
+
+	for i := range args {
+		arg := args[i]
+
+		if arg.ToBool() {
 			res = true
+			//break
 		}
+	}
 
-		for i := range childs {
-			child := childs[i]
-
-			if child.ToBool() {
-				res = true
-				//break
-			}
-		}
-
-		return res
-	},
+	return res
 }
 
-var equalsOperator = OperatorRunnable{
-	Token: "==",
-	Evaluate: func(n *token.EvalNode) (res token.Result) {
-		childs := n.Childrens
+func Equals(args token.Args) (res token.Result) {
 
-		if len(childs) != 2 {
-			log.Info("Cannot evaluate expression with %d arguments, expected 2", len(childs))
-			res = false
-		} else {
+	if len(args) < 2 {
+		log.Error("Cannot evaluate expression with less than 2 arguments, given %d", len(args))
+		res = false
+	} else {
 
-			first := childs[0].Result
-			second := childs[1].Result
+		first := args[0].Result
+		second := args[1].Result
 
-			res = first == second
+		res = first == second
+	}
 
-			log.Info(
-				"Evaluating [ (%s) %v == (%s) %v ] -> %v",
-				reflect.TypeOf(first),
-				first,
-				reflect.TypeOf(second),
-				second,
-				res,
-			)
-		}
-
-		return res
-	},
+	return res
 }
 
-var notEqualsEvaluator = OperatorRunnable{
-	Token: "!=",
-	Evaluate: func(n *token.EvalNode) (res token.Result) {
-		childs := n.Childrens
+func NotEquals(args token.Args) (res token.Result) {
 
-		if len(childs) != 2 {
-			log.Info("Cannot evaluate expression with %d arguments, expected 2", len(childs))
-			res = false
-		} else {
+	if len(args) < 2 {
+		log.Error("Cannot evaluate expression with less than 2 arguments, given %d", len(args))
+		res = false
+	} else {
 
-			first := childs[0].Result
-			second := childs[1].Result
+		first := args[0].Result
+		second := args[1].Result
 
-			res = first != second
+		res = first != second
+	}
 
-			log.Info(
-				"Evaluating [ (%s) %v %s (%s) %v ] -> %v",
-				reflect.TypeOf(first),
-				first,
-				n.Token,
-				reflect.TypeOf(second),
-				second,
-				res,
-			)
-		}
-
-		return res
-	},
-}
-
-func init() {
-	OperatorMap["and"] = andOperator
-	OperatorMap["or"] = orEvaluator
-	OperatorMap["=="] = equalsOperator
-	OperatorMap["!="] = notEqualsEvaluator
+	return res
 }

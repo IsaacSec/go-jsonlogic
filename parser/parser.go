@@ -2,10 +2,10 @@ package parser
 
 import (
 	"encoding/json"
-	"log/slog"
 
 	"github.com/IsaacSec/go-jsonlogic/operators"
 	"github.com/IsaacSec/go-jsonlogic/parser/token"
+	log "github.com/IsaacSec/go-jsonlogic/util/logger"
 )
 
 func ParseJson(data []byte) (*token.Node, error) {
@@ -29,9 +29,9 @@ func parseValue(value interface{}) *token.Node {
 			// Get operator key and children
 			for op, children := range val {
 				// Check if operator exits
-				if _, ok := operators.OperatorMap[op]; ok {
+				if _, ok := operators.Operators[op]; ok {
 					// Todo: Add cast error handler
-					slog.Info("Token: %v, Childs: %v", op, children)
+					log.Info("Token: %v, Children: %v", op, children)
 
 					switch childType := children.(type) {
 					case []interface{}:
@@ -49,7 +49,7 @@ func parseValue(value interface{}) *token.Node {
 						return node
 
 					default:
-						slog.Error("Error parsing: [%v] %v -> %v", childType, op, children)
+						log.Error("Error parsing: [%v] %v -> %v", childType, op, children)
 
 						return &token.Node{
 							Kind:  token.Object,

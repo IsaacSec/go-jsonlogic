@@ -38,7 +38,7 @@ func TestParseOperators(t *testing.T) {
 		}
 	}
 
-	assert.ElementsMatch(t, maps.GetKeys(found), maps.GetKeys(operators.OperatorMap), "operator missing")
+	assert.ElementsMatch(t, maps.GetKeys(found), maps.GetKeys(operators.Operators), "operator missing")
 }
 
 // Test parsing strings

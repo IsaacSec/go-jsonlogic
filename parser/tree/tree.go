@@ -57,7 +57,7 @@ func eval(n *token.Node) token.EvalNode {
 			children = append(children, &newChild)
 		}
 
-		new.Childrens = children
+		new.Args = children
 	}
 
 	// Node has children

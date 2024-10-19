@@ -12,21 +12,21 @@ import (
 func TestEqualsOnSameTypeAndValue(t *testing.T) {
 	expression := buildSimpleExp("==", 53, 53)
 
-	assertExpression(t, expression, equalsOperator, true)
+	assertExpression(t, expression, true)
 }
 
 // EQUALS evaluation, different type equal value -> 53 == "53"
 func TestEqualsOnDiffType(t *testing.T) {
 	expression := buildSimpleExp("==", 53, "fifty three")
 
-	assertExpression(t, expression, equalsOperator, false)
+	assertExpression(t, expression, false)
 }
 
 // EQUALS evaluation, different value -> 3421 == -123
 func TestEqualsOnDiffValue(t *testing.T) {
 	expression := buildSimpleExp("==", 3421, -123)
 
-	assertExpression(t, expression, equalsOperator, false)
+	assertExpression(t, expression, false)
 }
 
 // Todo: Add conversion type when possible i.e. -> 1 == "1" == 1.0
@@ -35,7 +35,7 @@ func TestEqualsOnDiffValue(t *testing.T) {
 func TestEqualsOnDiffTypeWithSameValue(t *testing.T) {
 	expression := buildSimpleExp("==", 42, 42.0)
 
-	assertExpression(t, expression, equalsOperator, false)
+	assertExpression(t, expression, false)
 }
 
 /***********************
@@ -46,14 +46,14 @@ func TestEqualsOnDiffTypeWithSameValue(t *testing.T) {
 func TestNotEqualsWithDiffValue(t *testing.T) {
 	expression := buildSimpleExp("!=", 35, 53)
 
-	assertExpression(t, expression, notEqualsEvaluator, true)
+	assertExpression(t, expression, true)
 }
 
 // NOT EQUALS evaluation, same type and equal value -> 53 != 53
 func TestNotEqualsWithSameValue(t *testing.T) {
 	expression := buildSimpleExp("!=", 53, 53)
 
-	assertExpression(t, expression, notEqualsEvaluator, false)
+	assertExpression(t, expression, false)
 }
 
 /***********************
@@ -66,7 +66,7 @@ func TestAndWithEmptyList(t *testing.T) {
 		"and",
 	)
 
-	assertExpression(t, expression, andOperator, true)
+	assertExpression(t, expression, true)
 }
 
 // AND evaluation, one true and multiple false -> [true, false, false] = false
@@ -78,7 +78,7 @@ func TestAndWithMultipleFalseAndAtLeastOneTrue(t *testing.T) {
 		false,
 	)
 
-	assertExpression(t, expression, andOperator, false)
+	assertExpression(t, expression, false)
 }
 
 // AND evaluation, all true -> [true, true, true] = true
@@ -90,7 +90,7 @@ func TestAndWithAllTrue(t *testing.T) {
 		true,
 	)
 
-	assertExpression(t, expression, andOperator, true)
+	assertExpression(t, expression, true)
 }
 
 // AND evaluation, all false -> [false, false, false] = false
@@ -102,7 +102,7 @@ func TestAndWithAllFalse(t *testing.T) {
 		false,
 	)
 
-	assertExpression(t, expression, andOperator, false)
+	assertExpression(t, expression, false)
 }
 
 /***********************
@@ -115,7 +115,7 @@ func TestOrWithEmptyList(t *testing.T) {
 		"or",
 	)
 
-	assertExpression(t, expression, orEvaluator, true)
+	assertExpression(t, expression, true)
 }
 
 // OR evaluation, one true and multiple false -> [false, true, false] = true
@@ -127,7 +127,7 @@ func TestOrWithMultipleFalseAndAtLeastOneTrue(t *testing.T) {
 		false,
 	)
 
-	assertExpression(t, expression, orEvaluator, true)
+	assertExpression(t, expression, true)
 }
 
 // AND evaluation, all true -> [true, true, true] = true
@@ -139,7 +139,7 @@ func TestOrWithAllTrue(t *testing.T) {
 		true,
 	)
 
-	assertExpression(t, expression, orEvaluator, true)
+	assertExpression(t, expression, true)
 }
 
 // AND evaluation, all false -> [false, false, false] = false
@@ -151,5 +151,5 @@ func TestOrWithAllFalse(t *testing.T) {
 		false,
 	)
 
-	assertExpression(t, expression, orEvaluator, false)
+	assertExpression(t, expression, false)
 }

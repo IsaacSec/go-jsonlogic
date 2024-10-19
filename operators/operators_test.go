@@ -17,9 +17,9 @@ Test evaluating invalid operator (int are not valid for json key)
 func TestInvalidTokenInOperator(t *testing.T) {
 
 	var expression = token.EvalNode{
-		Token:     2345,
-		Kind:      token.Operator,
-		Childrens: make([]*token.EvalNode, 0),
+		Token: 2345,
+		Kind:  token.Operator,
+		Args:  make([]*token.EvalNode, 0),
 	}
 
 	if Run(&expression) == true {
@@ -36,14 +36,14 @@ func buildGroupExp(op token.Token, results ...token.Result) token.EvalNode {
 
 	for i, res := range results {
 		expressions[i] = &token.EvalNode{
-			Token:     res,
-			Result:    res,
-			Kind:      token.PrimitiveVal,
-			Childrens: nil,
+			Token:  res,
+			Result: res,
+			Kind:   token.PrimitiveVal,
+			Args:   nil,
 		}
 	}
 
-	var group = token.EvalNode{Token: op, Kind: token.Operator, Childrens: expressions}
+	var group = token.EvalNode{Token: op, Kind: token.Operator, Args: expressions}
 
 	return group
 }
@@ -52,7 +52,7 @@ func buildSimpleExp(op token.Token, a token.Token, b token.Token) token.EvalNode
 	return token.EvalNode{
 		Token: op,
 		Kind:  token.Operator,
-		Childrens: []*token.EvalNode{
+		Args: []*token.EvalNode{
 			{
 				Token:  a,
 				Kind:   token.PrimitiveVal,
@@ -67,8 +67,8 @@ func buildSimpleExp(op token.Token, a token.Token, b token.Token) token.EvalNode
 	}
 }
 
-func assertExpression(t *testing.T, exp token.EvalNode, evaluator OperatorRunnable, expected token.Result) {
-	actual := evaluator.Evaluate(&exp)
+func assertExpression(t *testing.T, exp token.EvalNode, expected token.Result) {
+	actual := Run(&exp)
 
 	assert.Equal(t, expected, actual)
 }
