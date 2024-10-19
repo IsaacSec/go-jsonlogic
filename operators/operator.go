@@ -1,13 +1,20 @@
 package operators
 
 import (
+	"fmt"
 	"reflect"
 
 	"github.com/IsaacSec/go-jsonlogic/parser/token"
 	log "github.com/IsaacSec/go-jsonlogic/util/logger"
 )
 
-type Operator func(token.Args) token.Result
+type Args []*token.EvalNode
+type Operator func(Args) token.Result
+
+type pair struct {
+	Value token.Token
+	_Type string
+}
 
 var Operators map[string]Operator = make(map[string]Operator)
 
@@ -26,7 +33,7 @@ func Run(n *token.EvalNode) token.Result {
 			log.Info(
 				"Evaluation %s %v -> %v",
 				n.Token,
-				args.GetArgValueAndType(),
+				Args(args).GetArgValueAndType(),
 				res,
 			)
 		} else {
@@ -43,10 +50,27 @@ func Run(n *token.EvalNode) token.Result {
 	return res
 }
 
+func (a Args) GetArgValueAndType() (list []pair) {
+	for i := range a {
+		arg := a[i]
+		list = append(list, pair{Value: arg.Token, _Type: reflect.TypeOf(arg.Token).String()})
+	}
+
+	return list
+}
+
+func (p pair) String() string {
+
+	return fmt.Sprintf("%v (%s)", p.Value, p._Type)
+}
+
 func init() {
 	Operators["and"] = And
 	Operators["or"] = Or
 	Operators["=="] = Equals
 	Operators["!="] = NotEquals
 	Operators["<"] = LessThan
+	Operators["<="] = LessOrEqualsThan
+	Operators[">"] = GreaterThan
+	Operators[">="] = GreaterOrEqualsThan
 }

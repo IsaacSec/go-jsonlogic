@@ -5,17 +5,11 @@ import (
 	log "github.com/IsaacSec/go-jsonlogic/util/logger"
 )
 
-func And(args token.Args) (res token.Result) {
+func And(args Args) (res token.Result) {
 	res = true
 
 	for i := range args {
 		arg := args[i]
-
-		log.Info(
-			"Evaluating exp [%v][ %v ]",
-			i,
-			arg.Result,
-		)
 
 		if !arg.ToBool() {
 			res = false
@@ -25,7 +19,7 @@ func And(args token.Args) (res token.Result) {
 	return res
 }
 
-func Or(args token.Args) (res token.Result) {
+func Or(args Args) (res token.Result) {
 
 	if len(args) > 0 {
 		res = false
@@ -45,7 +39,7 @@ func Or(args token.Args) (res token.Result) {
 	return res
 }
 
-func Equals(args token.Args) (res token.Result) {
+func Equals(args Args) (res token.Result) {
 
 	if len(args) < 2 {
 		log.Error("Cannot evaluate expression with less than 2 arguments, given %d", len(args))
@@ -61,7 +55,7 @@ func Equals(args token.Args) (res token.Result) {
 	return res
 }
 
-func NotEquals(args token.Args) (res token.Result) {
+func NotEquals(args Args) (res token.Result) {
 
 	if len(args) < 2 {
 		log.Error("Cannot evaluate expression with less than 2 arguments, given %d", len(args))
