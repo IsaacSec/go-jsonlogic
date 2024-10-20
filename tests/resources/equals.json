@@ -1,0 +1,62 @@
+[
+    {
+        "rules": {"==": [1, 1]},
+        "expected": true
+    },
+    {
+        "rules": {"==": [1, "1"]},
+        "expected": true
+    },
+    {
+        "rules": {"==": ["1", 1]},
+        "expected": true
+    },
+    {
+        "rules": {"==": ["1.1", 1]},
+        "expected": false
+    },
+    {
+        "rules": {"==": [1.1, 1]},
+        "expected": false
+    },
+    {
+        "rules": {"==": ["1.0", 1]},
+        "expected": true
+    },
+    {
+        "rules": {"==": [3.0, "3"]},
+        "expected": true
+    },
+    {
+        "rules": {"==": [1, true]},
+        "expected": true
+    },
+    {
+        "rules": {"==": [false, false]},
+        "expected": true
+    },
+    {
+        "rules": {"==": [false, 0]},
+        "expected": true
+    },
+    {
+        "rules": {"==": [false, true]},
+        "expected": false
+    },
+    {
+        "rules": {"==": [null, null]},
+        "expected": true
+    },
+    {
+        "rules": {"==": [1, null]},
+        "expected": false
+    },
+    {
+        "rules": {"==": ["one", "one"]},
+        "expected": true
+    },
+    {
+        "rules": {"==": ["one", "zero"]},
+        "expected": false
+    }
+]

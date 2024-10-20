@@ -5,7 +5,7 @@ import (
 	"strconv"
 )
 
-func toFloat(value any) (res float64, err error) {
+func ToFloat(value any) (res float64, err error) {
 	switch v := any(value).(type) {
 	case int:
 		res = float64(v)
@@ -51,8 +51,8 @@ func ConvertToFloat(a any, b any) (ia float64, ib float64, err error) {
 		}
 	}()
 
-	ia, aErr := toFloat(a)
-	ib, bErr := toFloat(b)
+	ia, aErr := ToFloat(a)
+	ib, bErr := ToFloat(b)
 
 	if aErr != nil || bErr != nil {
 		err = fmt.Errorf("arg0: [%v] or arg1: [%v] cannot be converted", aErr, bErr)

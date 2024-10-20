@@ -5,6 +5,7 @@ import (
 
 	"github.com/IsaacSec/go-jsonlogic/operators"
 	"github.com/IsaacSec/go-jsonlogic/parser/token"
+	"github.com/IsaacSec/go-jsonlogic/parser/tree"
 	log "github.com/IsaacSec/go-jsonlogic/util/logger"
 )
 
@@ -17,10 +18,21 @@ func ParseJson(data []byte) (*token.Node, error) {
 		return nil, err
 	}
 
-	return parseValue(v), nil
+	return parse(v), nil
 }
 
-func parseValue(value interface{}) *token.Node {
+func ParseMap(data any) *token.Node {
+
+	return parse(data)
+}
+
+func Apply(rules any, data any) (bool, error) {
+	logicTree := tree.Tree{Root: ParseMap(rules)}
+
+	return logicTree.Eval(), nil
+}
+
+func parse(value interface{}) *token.Node {
 
 	switch val := value.(type) {
 	case map[string]interface{}:
@@ -43,7 +55,7 @@ func parseValue(value interface{}) *token.Node {
 
 						for _, child := range children.([]interface{}) {
 							// Recursion (DFS) to parse every node
-							node.Childrens = append(node.Childrens, parseValue(child))
+							node.Childrens = append(node.Childrens, parse(child))
 						}
 
 						return node
@@ -73,7 +85,7 @@ func parseValue(value interface{}) *token.Node {
 		}
 		for _, v := range val {
 			// Recursion (DFS) to parse every node
-			node.Childrens = append(node.Childrens, parseValue(v))
+			node.Childrens = append(node.Childrens, parse(v))
 		}
 		return node
 	case string, float64, bool, int:

@@ -52,8 +52,16 @@ func Run(n *token.EvalNode) token.Result {
 
 func (a Args) GetArgValueAndType() (list []pair) {
 	for i := range a {
+		var t string
 		arg := a[i]
-		list = append(list, pair{Value: arg.Token, _Type: reflect.TypeOf(arg.Token).String()})
+
+		if arg.Token != nil {
+			t = reflect.TypeOf(arg.Token).String()
+		} else {
+			t = "null"
+		}
+
+		list = append(list, pair{Value: arg.Token, _Type: t})
 	}
 
 	return list

@@ -29,15 +29,6 @@ func TestEqualsOnDiffValue(t *testing.T) {
 	assertExpression(t, expression, false)
 }
 
-// Todo: Add conversion type when possible i.e. -> 1 == "1" == 1.0
-
-// EQUALS evaluation, different type and equal value -> 42 == 42.0
-func TestEqualsOnDiffTypeWithSameValue(t *testing.T) {
-	expression := buildSimpleExp("==", 42, 42.0)
-
-	assertExpression(t, expression, false)
-}
-
 /***********************
  *		NOT EQUALS
  ***********************/

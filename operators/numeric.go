@@ -31,6 +31,16 @@ func (args Args) compareNumbers(compare func(float64, float64) bool) (res token.
 	return compare(first, second)
 }
 
+func (args Args) ContainsNumber() bool {
+	for _, a := range args {
+		if a.IsNumeric() {
+			return true
+		}
+	}
+
+	return false
+}
+
 func LessThan(args Args) (res token.Result) {
 
 	return args.compareNumbers(func(a0 float64, a1 float64) bool {

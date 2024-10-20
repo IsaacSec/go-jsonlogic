@@ -42,3 +42,12 @@ func (n EvalNode) ToBool() bool {
 
 	return res
 }
+
+func (n EvalNode) IsNumeric() bool {
+
+	if _, err := util.ToFloat(n.Result); err == nil {
+		return true
+	} else {
+		return false
+	}
+}

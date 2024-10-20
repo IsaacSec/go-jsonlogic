@@ -46,8 +46,17 @@ func Equals(args Args) (res token.Result) {
 		res = false
 	} else {
 
-		first := args[0].Result
-		second := args[1].Result
+		var first, second = args[0].Result, args[1].Result
+
+		// Todo: implement array and object comparison, (suggested conversion to string before)
+
+		if args.ContainsNumber() {
+			a0, a1, err := args.getTwoNumericArgs()
+
+			if err == nil {
+				first, second = a0, a1
+			}
+		}
 
 		res = first == second
 	}

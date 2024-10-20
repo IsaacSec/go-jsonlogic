@@ -45,6 +45,11 @@ func eval(n *token.Node) token.EvalNode {
 		Result: false,
 	}
 
+	if n.Kind == token.Null {
+		new.Result = nil
+		return new
+	}
+
 	if n.Childrens == nil { // This is a leaf node, Todo: what happens of null value tokens
 		new.Result = n.Token
 		return new
