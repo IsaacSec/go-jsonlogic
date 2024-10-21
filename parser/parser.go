@@ -5,7 +5,6 @@ import (
 
 	"github.com/IsaacSec/go-jsonlogic/operators"
 	"github.com/IsaacSec/go-jsonlogic/parser/token"
-	"github.com/IsaacSec/go-jsonlogic/parser/tree"
 	log "github.com/IsaacSec/go-jsonlogic/util/logger"
 )
 
@@ -24,12 +23,6 @@ func ParseJson(data []byte) (*token.Node, error) {
 func ParseMap(data any) *token.Node {
 
 	return parse(data)
-}
-
-func Apply(rules any, data any) (bool, error) {
-	logicTree := tree.Tree{Root: ParseMap(rules)}
-
-	return logicTree.Eval(), nil
 }
 
 func parse(value interface{}) *token.Node {

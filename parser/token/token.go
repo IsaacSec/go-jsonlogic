@@ -5,18 +5,18 @@ import (
 	log "github.com/IsaacSec/go-jsonlogic/util/logger"
 )
 
-type Kind int
+type Kind string
 type Token interface{}
 type Result interface{}
 
 const (
-	Null Kind = iota + 1
-	PrimitiveVal
-	ReferenceVal
-	Operator
-	Array
-	Expression
-	Object
+	Null         Kind = "null"
+	PrimitiveVal Kind = "val"
+	ReferenceVal Kind = "ref"
+	Operator     Kind = "op"
+	Array        Kind = "array"
+	Expression   Kind = "exp"
+	Object       Kind = "obj"
 )
 
 type Node struct {

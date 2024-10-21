@@ -3,15 +3,24 @@ package tree
 import (
 	op "github.com/IsaacSec/go-jsonlogic/operators"
 	"github.com/IsaacSec/go-jsonlogic/parser/token"
-	log "github.com/IsaacSec/go-jsonlogic/util/logger"
 )
 
 type Tree struct {
-	Root *token.Node
+	Root       *token.Node
+	Evaluation *token.EvalNode
 }
 
 func (t Tree) Eval() bool {
 	return eval(t.Root).ToBool()
+}
+
+func (t Tree) EvaluateTree() *token.EvalNode {
+
+	if t.Evaluation == nil {
+		t.Evaluation = eval(t.Root)
+	}
+
+	return t.Evaluation
 }
 
 func (t Tree) Flatten() []*token.Node {
@@ -36,7 +45,7 @@ func (t Tree) Flatten() []*token.Node {
 	return flattened
 }
 
-func eval(n *token.Node) token.EvalNode {
+func eval(n *token.Node) *token.EvalNode {
 
 	// Todo: check that adresses are different
 	new := token.EvalNode{
@@ -47,22 +56,22 @@ func eval(n *token.Node) token.EvalNode {
 
 	if n.Kind == token.Null {
 		new.Result = nil
-		return new
+		return &new
 	}
 
 	if n.Childrens == nil { // This is a leaf node, Todo: what happens of null value tokens
 		new.Result = n.Token
-		return new
+		return &new
 	} else {
-		var children []*token.EvalNode
+		var args []*token.EvalNode
 
 		for i := range n.Childrens {
 			child := n.Childrens[i]
 			newChild := eval(child)
-			children = append(children, &newChild)
+			args = append(args, newChild)
 		}
 
-		new.Args = children
+		new.Args = args
 	}
 
 	// Node has children
@@ -74,7 +83,5 @@ func eval(n *token.Node) token.EvalNode {
 		new.Result = false
 	}
 
-	log.Info("Token [%v] result: %v", new.Token, new.Result)
-
-	return new
+	return &new
 }

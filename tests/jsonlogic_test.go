@@ -6,7 +6,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/IsaacSec/go-jsonlogic/parser"
+	"github.com/IsaacSec/go-jsonlogic/jsonlogic"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -31,7 +31,7 @@ func assertTestCases(t *testing.T, tests []any) {
 		rules := jsonObject["rules"]
 		expected := jsonObject["expected"]
 
-		result, err := parser.Apply(rules, nil)
+		result, err := jsonlogic.Apply(rules, nil)
 
 		assert.NoError(t, err)
 		assert.Equal(t, expected, result, fmt.Sprintf("comparison: %v", rules))
