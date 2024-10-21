@@ -8,6 +8,7 @@ import (
 type Tree struct {
 	Root       *token.Node
 	Evaluation *token.EvalNode
+	Data       any // Json object or array
 }
 
 func (t Tree) Eval() bool {

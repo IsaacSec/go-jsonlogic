@@ -31,6 +31,17 @@ func parse(value interface{}) *token.Node {
 	case map[string]interface{}:
 		// Determine if it is operator or object
 		if len(val) == 1 {
+
+			// Identify variable reference
+			if ref, found := val["var"]; found {
+				node := &token.Node{
+					Kind:  token.ReferenceVal,
+					Token: ref,
+				}
+
+				return node
+			}
+
 			// Get operator key and children
 			for op, children := range val {
 				// Check if operator exits
