@@ -18,9 +18,22 @@ type pair struct {
 
 var Operators map[string]Operator = make(map[string]Operator)
 
-func Run(n *token.EvalNode) token.Result {
+func (args Args) assertHavingTwoArgs() {
+	if len(args) < 2 {
+		panic(fmt.Sprintf("cannot evaluate expression with less than 2 arguments, given %d", len(args)))
+	}
+}
 
-	var res token.Result
+func Run(n *token.EvalNode) (res token.Result) {
+
+	defer func() {
+		if r := recover(); r != nil {
+			log.Warn("Operation failed, Token [%v]: %s", n.Token, r)
+
+			// Default value on panic
+			res = false
+		}
+	}()
 
 	switch n.Token.(type) {
 	case string:
@@ -40,7 +53,7 @@ func Run(n *token.EvalNode) token.Result {
 			log.Error("Undefined operator %s", n.Token)
 
 			// Todo: change with an error handler
-			res = false // Default on error value
+			res = false // Default on undefined operator
 		}
 
 	default:

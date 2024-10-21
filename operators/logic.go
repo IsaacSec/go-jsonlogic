@@ -2,7 +2,6 @@ package operators
 
 import (
 	"github.com/IsaacSec/go-jsonlogic/parser/token"
-	log "github.com/IsaacSec/go-jsonlogic/util/logger"
 )
 
 func And(args Args) (res token.Result) {
@@ -41,41 +40,35 @@ func Or(args Args) (res token.Result) {
 
 func Equals(args Args) (res token.Result) {
 
-	if len(args) < 2 {
-		log.Error("Cannot evaluate expression with less than 2 arguments, given %d", len(args))
-		res = false
-	} else {
+	args.assertHavingTwoArgs()
 
-		var first, second = args[0].Result, args[1].Result
+	var first, second = args[0].Result, args[1].Result
+	// Todo: implement array and object comparison, (suggested conversion to string before)
 
-		// Todo: implement array and object comparison, (suggested conversion to string before)
+	if args.ContainsNumber() {
+		a0, a1, err := args.getTwoNumericArgs()
 
-		if args.ContainsNumber() {
-			a0, a1, err := args.getTwoNumericArgs()
-
-			if err == nil {
-				first, second = a0, a1
-			}
+		if err == nil {
+			first, second = a0, a1
 		}
-
-		res = first == second
 	}
 
-	return res
+	return first == second
 }
 
 func NotEquals(args Args) (res token.Result) {
 
-	if len(args) < 2 {
-		log.Error("Cannot evaluate expression with less than 2 arguments, given %d", len(args))
-		res = false
-	} else {
+	args.assertHavingTwoArgs()
 
-		first := args[0].Result
-		second := args[1].Result
+	var first, second = args[0].Result, args[1].Result
 
-		res = first != second
+	if args.ContainsNumber() {
+		a0, a1, err := args.getTwoNumericArgs()
+
+		if err == nil {
+			first, second = a0, a1
+		}
 	}
 
-	return res
+	return first != second
 }

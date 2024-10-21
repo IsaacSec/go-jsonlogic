@@ -1,22 +1,15 @@
 package operators
 
 import (
-	"fmt"
-
 	"github.com/IsaacSec/go-jsonlogic/parser/token"
 	"github.com/IsaacSec/go-jsonlogic/util"
 	log "github.com/IsaacSec/go-jsonlogic/util/logger"
 )
 
 func (args Args) getTwoNumericArgs() (arg0 float64, arg1 float64, err error) {
+	args.assertHavingTwoArgs()
 
-	if len(args) < 2 {
-		err = fmt.Errorf("cannot evaluate expression with less than 2 arguments, given %d", len(args))
-	} else {
-		arg0, arg1, err = util.ConvertToFloat(args[0].Result, args[1].Result)
-	}
-
-	return arg0, arg1, err
+	return util.ConvertToFloat(args[0].Result, args[1].Result)
 }
 
 func (args Args) compareNumbers(compare func(float64, float64) bool) (res token.Result) {
