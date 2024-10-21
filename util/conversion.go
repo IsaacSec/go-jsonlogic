@@ -12,7 +12,11 @@ func ToFloat(value any) (res float64, err error) {
 	case float64:
 		res = v
 	case string:
-		res, err = strconv.ParseFloat(v, 64)
+		if v == "" {
+			res = 0.0
+		} else {
+			res, err = strconv.ParseFloat(v, 64)
+		}
 	case bool:
 		if v {
 			res = 1.0

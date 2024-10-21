@@ -56,6 +56,18 @@
         "expected": true
     },
     {
+        "rules": {"==": ["", false]},
+        "expected": true
+    },
+    {
+        "rules": {"==": ["", "0"]},
+        "expected": false
+    },
+    {
+        "rules": {"==": ["1.0", "1"]},
+        "expected": false
+    },
+    {
         "rules": {"==": ["one", "zero"]},
         "expected": false
     },

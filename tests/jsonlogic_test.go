@@ -11,7 +11,19 @@ import (
 )
 
 func TestEquals(t *testing.T) {
-	file, err := os.Open("resources/equals.json")
+	tests := loadTestCases(t, "equals.json")
+
+	assertTestCases(t, tests)
+}
+
+func TestAnd(t *testing.T) {
+	tests := loadTestCases(t, "and.json")
+
+	assertTestCases(t, tests)
+}
+
+func loadTestCases(t *testing.T, filename string) []any {
+	file, err := os.Open("resources/" + filename)
 
 	assert.NoError(t, err)
 
@@ -21,7 +33,7 @@ func TestEquals(t *testing.T) {
 
 	json.NewDecoder(file).Decode(&testCases)
 
-	assertTestCases(t, testCases)
+	return testCases
 }
 
 func assertTestCases(t *testing.T, tests []any) {

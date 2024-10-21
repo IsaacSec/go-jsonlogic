@@ -1,0 +1,68 @@
+[
+    {
+        "rules": {"and": [1, 1, 1]},
+        "expected": true
+    },
+    {
+        "rules": {"and": [1, 1.0, "1.0"]},
+        "expected": true
+    },
+    {
+        "rules": {"and": [true, 1, "1"]},
+        "expected": true
+    },
+    {
+        "rules": {"and": [true, 1, "", 1.0]},
+        "expected": false
+    },
+    {
+        "rules": {"and": ["0", "false", "false"]},
+        "expected": true
+    },
+    {
+        "rules": {"and": ["true", "true", "true"]},
+        "expected": true
+    },
+    {
+        "rules": {"and": [false, true, true]},
+        "expected": false
+    },
+    {
+        "rules": {"and": [true, false, true]},
+        "expected": false
+    },
+    {
+        "rules": {"and": [true, true, false]},
+        "expected": false
+    },
+    {
+        "rules": {
+            "and": [
+                {"and": [true, true, true]},
+                {
+                    "and": [ 
+                        {"and": [true, true, true]},
+                        true,
+                        true
+                    ]},
+                {"and": [true, true, true]}
+            ]
+        },
+        "expected": true
+    },
+    {
+        "rules": {
+            "and": [
+                {"and": [true, true, true]},
+                {
+                    "and": [ 
+                        {"and": [true, true, true]},
+                        false,
+                        true
+                    ]},
+                {"and": [true, true, true]}
+            ]
+        },
+        "expected": false
+    }
+]

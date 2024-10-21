@@ -1,10 +1,34 @@
 package operators
 
 import (
+	"reflect"
+
 	"github.com/IsaacSec/go-jsonlogic/parser/token"
 	"github.com/IsaacSec/go-jsonlogic/util"
 	log "github.com/IsaacSec/go-jsonlogic/util/logger"
 )
+
+func (args Args) getTwoComparableArgs() (a0 any, a1 any) {
+
+	first, second := args[0].Result, args[1].Result
+
+	// Todo: implement array and object comparison, (suggested conversion to string before)
+
+	if reflect.TypeOf(first) == reflect.TypeOf(second) {
+		a0, a1 = first, second
+	} else {
+		if args.ContainsNumber() {
+			var err error
+			a0, a1, err = args.getTwoNumericArgs()
+
+			if err != nil {
+				a0, a1 = first, second
+			}
+		}
+	}
+
+	return
+}
 
 func (args Args) getTwoNumericArgs() (arg0 float64, arg1 float64, err error) {
 	args.assertHavingTwoArgs()

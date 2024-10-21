@@ -31,7 +31,6 @@ func Or(args Args) (res token.Result) {
 
 		if arg.ToBool() {
 			res = true
-			//break
 		}
 	}
 
@@ -42,16 +41,7 @@ func Equals(args Args) (res token.Result) {
 
 	args.assertHavingTwoArgs()
 
-	var first, second = args[0].Result, args[1].Result
-	// Todo: implement array and object comparison, (suggested conversion to string before)
-
-	if args.ContainsNumber() {
-		a0, a1, err := args.getTwoNumericArgs()
-
-		if err == nil {
-			first, second = a0, a1
-		}
-	}
+	var first, second = args.getTwoComparableArgs()
 
 	return first == second
 }
@@ -60,15 +50,7 @@ func NotEquals(args Args) (res token.Result) {
 
 	args.assertHavingTwoArgs()
 
-	var first, second = args[0].Result, args[1].Result
-
-	if args.ContainsNumber() {
-		a0, a1, err := args.getTwoNumericArgs()
-
-		if err == nil {
-			first, second = a0, a1
-		}
-	}
+	var first, second = args.getTwoComparableArgs()
 
 	return first != second
 }
