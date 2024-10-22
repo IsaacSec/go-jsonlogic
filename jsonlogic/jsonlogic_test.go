@@ -10,7 +10,7 @@ import (
 
 func TestReturnEvaluationTree(t *testing.T) {
 
-	var rules interface{}
+	var rules map[string]any
 
 	json.Unmarshal([]byte(`
 		{

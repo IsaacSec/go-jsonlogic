@@ -24,6 +24,8 @@ func (args Args) getTwoComparableArgs() (a0 any, a1 any) {
 			if err != nil {
 				a0, a1 = first, second
 			}
+		} else {
+			a0, a1 = first, second
 		}
 	}
 

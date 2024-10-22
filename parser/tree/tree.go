@@ -2,26 +2,38 @@ package tree
 
 import (
 	op "github.com/IsaacSec/go-jsonlogic/operators"
+	"github.com/IsaacSec/go-jsonlogic/parser/refsolver"
 	"github.com/IsaacSec/go-jsonlogic/parser/token"
 )
 
 type Tree struct {
-	Root       *token.Node
-	Evaluation *token.EvalNode
-	Data       any // Json object or array
+	Root *token.Node
 }
 
-func (t Tree) Eval() bool {
-	return eval(t.Root).ToBool()
-}
+func (t Tree) Eval(data any) bool {
+	var input map[string]any
 
-func (t Tree) EvaluateTree() *token.EvalNode {
-
-	if t.Evaluation == nil {
-		t.Evaluation = eval(t.Root)
+	if data != nil {
+		input = data.(map[string]any)
+	} else {
+		input = make(map[string]any)
 	}
 
-	return t.Evaluation
+	return eval(t.Root, input).ToBool()
+}
+
+// A json object as input
+// Todo: implement array input
+func (t Tree) EvaluateTree(data any) *token.EvalNode {
+	var input map[string]any
+
+	if data != nil {
+		input = data.(map[string]any)
+	} else {
+		input = make(map[string]any)
+	}
+
+	return eval(t.Root, input)
 }
 
 func (t Tree) Flatten() []*token.Node {
@@ -46,13 +58,19 @@ func (t Tree) Flatten() []*token.Node {
 	return flattened
 }
 
-func eval(n *token.Node) *token.EvalNode {
+func eval(n *token.Node, data map[string]any) *token.EvalNode {
 
 	// Todo: check that adresses are different
 	new := token.EvalNode{
 		Token:  n.Token,
 		Kind:   n.Kind,
 		Result: false,
+	}
+
+	if n.Kind == token.ReferenceVal {
+		new.Result = refsolver.GetValue(data, n.Token)
+		new.Kind = token.PrimitiveVal
+		return &new
 	}
 
 	if n.Kind == token.Null {
@@ -68,7 +86,7 @@ func eval(n *token.Node) *token.EvalNode {
 
 		for i := range n.Childrens {
 			child := n.Childrens[i]
-			newChild := eval(child)
+			newChild := eval(child, data)
 			args = append(args, newChild)
 		}
 

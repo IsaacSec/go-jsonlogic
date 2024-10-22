@@ -8,26 +8,26 @@ import (
 	log "github.com/IsaacSec/go-jsonlogic/util/logger"
 )
 
-func ParseJson(data []byte) (*token.Node, error) {
-	var v interface{}
+func ParseJson(raw []byte) (*token.Node, error) {
+	var rules interface{}
 
-	err := json.Unmarshal(data, &v)
+	err := json.Unmarshal(raw, &rules)
 
 	if err != nil {
 		return nil, err
 	}
 
-	return parse(v), nil
+	return parse(rules), nil
 }
 
-func ParseMap(data any) *token.Node {
+func ParseMap(rules map[string]interface{}) *token.Node {
 
-	return parse(data)
+	return parse(rules)
 }
 
-func parse(value interface{}) *token.Node {
+func parse(rules interface{}) *token.Node {
 
-	switch val := value.(type) {
+	switch val := rules.(type) {
 	case map[string]interface{}:
 		// Determine if it is operator or object
 		if len(val) == 1 {

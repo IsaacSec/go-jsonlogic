@@ -22,6 +22,12 @@ func TestAnd(t *testing.T) {
 	assertTestCases(t, tests)
 }
 
+func TestVarSolver(t *testing.T) {
+	tests := loadTestCases(t, "var.json")
+
+	assertTestCases(t, tests)
+}
+
 func loadTestCases(t *testing.T, filename string) []any {
 	file, err := os.Open("resources/" + filename)
 
@@ -40,12 +46,15 @@ func assertTestCases(t *testing.T, tests []any) {
 	for _, test := range tests {
 		jsonObject := (test.(map[string]any))
 
-		rules := jsonObject["rules"]
+		rules := jsonObject["rules"].(map[string]any)
 		expected := jsonObject["expected"]
+		data := jsonObject["data"]
 
-		result, err := jsonlogic.Apply(rules, nil)
+		result, err := jsonlogic.Apply(rules, data)
 
 		assert.NoError(t, err)
 		assert.Equal(t, expected, result, fmt.Sprintf("comparison: %v", rules))
+
+		fmt.Println("============================================")
 	}
 }

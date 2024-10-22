@@ -44,7 +44,7 @@ func Run(n *token.EvalNode) (res token.Result) {
 			res = evaluate(args)
 
 			log.Info(
-				"Evaluation %s %v -> %v",
+				"Evaluation: %s %v -> %v",
 				n.Token,
 				Args(args).GetArgValueAndType(),
 				res,
@@ -68,13 +68,13 @@ func (a Args) GetArgValueAndType() (list []pair) {
 		var t string
 		arg := a[i]
 
-		if arg.Token != nil {
-			t = reflect.TypeOf(arg.Token).String()
+		if arg.Result != nil {
+			t = reflect.TypeOf(arg.Result).String()
 		} else {
 			t = "null"
 		}
 
-		list = append(list, pair{Value: arg.Token, _Type: t})
+		list = append(list, pair{Value: arg.Result, _Type: t})
 	}
 
 	return list

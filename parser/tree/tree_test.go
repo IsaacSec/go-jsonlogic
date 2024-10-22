@@ -38,7 +38,7 @@ func TestTree(t *testing.T) {
 
 	tree.Root = &token.Node{Token: "and", Kind: token.Operator, Childrens: expression}
 
-	assert.Equal(t, true, tree.Eval())
+	assert.Equal(t, true, tree.Eval(nil))
 }
 
 /*
@@ -87,5 +87,5 @@ func TestFalseTree(t *testing.T) {
 
 	tree.Root = &token.Node{Token: "and", Kind: token.Operator, Childrens: expression}
 
-	assert.Equal(t, false, tree.Eval())
+	assert.Equal(t, false, tree.Eval(nil))
 }

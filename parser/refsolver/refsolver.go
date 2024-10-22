@@ -19,9 +19,9 @@ func GetValue(data map[string]any, ref any) (val any) {
 		// "foo.bar"
 		current, next = popRef(path)
 
-	case []string:
+	case []any:
 		// ["foo.bar", "fallback"]
-		current, next = popRef(path[0])
+		current, next = popRef(path[0].(string))
 
 		if len(path) > 1 {
 			fb = path[1]
@@ -36,6 +36,7 @@ func GetValue(data map[string]any, ref any) (val any) {
 			return obj
 		} else {
 			// Todo: add error handle for cast error
+			// Todo: improve reference identification, try another way instead of spliting and joining strings
 			value := GetValue(obj.(map[string]any), strings.Join(next, "."))
 
 			// Check if fallback

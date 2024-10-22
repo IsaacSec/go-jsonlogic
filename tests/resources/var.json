@@ -1,0 +1,37 @@
+[
+    {
+        "rules": {"==": [34, {"var": "age"}]},
+        "data": { "user": "Maria", "age": 34 },
+        "expected": true
+    },
+    {
+        "rules": {"==": [{"var": "age"}, 34]},
+        "data": { "user": "Maria", "age": 34 },
+        "expected": true
+    },
+    {
+        "rules": {"==": [null, {"var": "age"}]},
+        "data": { "user": "Maria"},
+        "expected": true
+    },
+    {
+        "rules": {"==": ["Maria", {"var": ["name", "Maria"]}]},
+        "data": { "age": 20 },
+        "expected": true
+    },
+    {
+        "rules": {"==": ["foo", {"var": "a.b.c"}]},
+        "data": { "a": { "b": { "c": "foo" } } },
+        "expected": true
+    },
+    {
+        "rules": {"==": [null, {"var": "a.b.c"}]},
+        "data": { "a": {  } },
+        "expected": true
+    },
+    {
+        "rules": {"==": ["foo", {"var": "a.b.c"}]},
+        "data": { "a": {  } },
+        "expected": false
+    }
+]

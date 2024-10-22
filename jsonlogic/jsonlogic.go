@@ -6,17 +6,15 @@ import (
 	"github.com/IsaacSec/go-jsonlogic/parser/tree"
 )
 
-func Apply(rules any, data any) (bool, error) {
+func Apply(rules map[string]any, data any) (bool, error) {
 	logicTree := tree.Tree{Root: parser.ParseMap(rules)}
 
-	return logicTree.Eval(), nil
+	return logicTree.Eval(data), nil
 }
 
-func ApplyTree(rules any, data any) (*token.EvalNode, error) {
+func ApplyTree(rules map[string]any, data any) (*token.EvalNode, error) {
 
 	logicTree := tree.Tree{Root: parser.ParseMap(rules)}
 
-	logicTree.EvaluateTree()
-
-	return logicTree.EvaluateTree(), nil
+	return logicTree.EvaluateTree(data), nil
 }
