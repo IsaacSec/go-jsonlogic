@@ -21,7 +21,7 @@ func TestGetFallbackOnMissingReference(t *testing.T) {
 		"bar": "test",
 	}
 
-	res := GetValue(json, []string{"foo", "fallback"})
+	res := GetValue(json, []any{"foo", "fallback"})
 	assert.Equal(t, "fallback", res)
 }
 
@@ -49,7 +49,7 @@ func TestGetFallbackOnMissingWithNestedReference(t *testing.T) {
 		},
 	}
 
-	res := GetValue(json, []string{"user.name.first", "John"})
+	res := GetValue(json, []any{"user.name.first", "John"})
 	assert.Equal(t, "John", res)
 }
 
