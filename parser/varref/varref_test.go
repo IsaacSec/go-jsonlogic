@@ -1,4 +1,4 @@
-package refsolver
+package varref
 
 import (
 	"testing"

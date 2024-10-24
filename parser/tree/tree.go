@@ -2,8 +2,8 @@ package tree
 
 import (
 	op "github.com/IsaacSec/go-jsonlogic/operators"
-	"github.com/IsaacSec/go-jsonlogic/parser/refsolver"
 	"github.com/IsaacSec/go-jsonlogic/parser/token"
+	"github.com/IsaacSec/go-jsonlogic/parser/varref"
 )
 
 type Tree struct {
@@ -68,7 +68,7 @@ func eval(n *token.Node, data map[string]any) *token.EvalNode {
 	}
 
 	if n.Kind == token.ReferenceVal {
-		new.Result = refsolver.GetValue(data, n.Token)
+		new.Result = varref.GetValue(data, n.Token)
 		new.Kind = token.PrimitiveVal
 		return &new
 	}
