@@ -5,7 +5,7 @@ import (
 	"reflect"
 
 	"github.com/IsaacSec/go-jsonlogic/parser/token"
-	log "github.com/IsaacSec/go-jsonlogic/util/logger"
+	"github.com/IsaacSec/go-jsonlogic/util/logger"
 )
 
 type Args []*token.EvalNode
@@ -28,7 +28,7 @@ func Run(n *token.EvalNode) (res token.Result) {
 
 	defer func() {
 		if r := recover(); r != nil {
-			log.Warn("Operation failed, Token [%v]: %s", n.Token, r)
+			logger.Warn("Operation failed, Token [%v]: %s", n.Token, r)
 
 			// Default value on panic
 			res = false
@@ -43,21 +43,21 @@ func Run(n *token.EvalNode) (res token.Result) {
 			args := n.Args
 			res = evaluate(args)
 
-			log.Info(
+			logger.Info(
 				"Evaluation: %s %v -> %v",
 				n.Token,
 				Args(args).GetArgValueAndType(),
 				res,
 			)
 		} else {
-			log.Error("Undefined operator %s", n.Token)
+			logger.Error("Undefined operator %s", n.Token)
 
 			// Todo: change with an error handler
 			res = false // Default on undefined operator
 		}
 
 	default:
-		log.Error("Token [%v] with wrong type [%v]", n.Token, reflect.TypeOf(n.Token))
+		logger.Error("Token [%v] with wrong type [%v]", n.Token, reflect.TypeOf(n.Token))
 	}
 
 	return res

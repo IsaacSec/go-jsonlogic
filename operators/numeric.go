@@ -5,7 +5,7 @@ import (
 
 	"github.com/IsaacSec/go-jsonlogic/parser/token"
 	"github.com/IsaacSec/go-jsonlogic/util"
-	log "github.com/IsaacSec/go-jsonlogic/util/logger"
+	"github.com/IsaacSec/go-jsonlogic/util/logger"
 )
 
 func (args Args) getTwoComparableArgs() (a0 any, a1 any) {
@@ -42,7 +42,7 @@ func (args Args) compareNumbers(compare func(float64, float64) bool) (res token.
 	first, second, err := args.getTwoNumericArgs()
 
 	if err != nil {
-		log.Error("Argument retrieve failed: %s", err)
+		logger.Error("Argument retrieve failed: %s", err)
 		res = false
 		return res
 	}

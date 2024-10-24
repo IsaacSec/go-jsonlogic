@@ -2,7 +2,7 @@ package token
 
 import (
 	"github.com/IsaacSec/go-jsonlogic/util"
-	log "github.com/IsaacSec/go-jsonlogic/util/logger"
+	"github.com/IsaacSec/go-jsonlogic/util/logger"
 )
 
 type Kind string
@@ -36,7 +36,7 @@ func (n EvalNode) ToBool() bool {
 	res, err := util.ToBool(n.Result)
 
 	if err != nil {
-		log.Error("Unexpecter bool conversion: %s", err)
+		logger.Error("Unexpecter bool conversion: %s", err)
 		return false
 	}
 
