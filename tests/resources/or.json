@@ -1,0 +1,48 @@
+[
+    {
+        "rules": {"or": [1, 0, 1]},
+        "expected": true
+    },
+    {
+        "rules": {"or": [true, true, false]},
+        "expected": true
+    },
+    {
+        "rules": {"or": [false, false, true]},
+        "expected": true
+    },
+    {
+        "rules": {"or": [false, false, false]},
+        "expected": false
+    },
+    {
+        "rules": {
+            "or": [
+                {"or": [false, false]},
+                {
+                    "or": [ 
+                        {"==": [1, 1]},
+                        false,
+                        {"==": [1, 0]}
+                    ]},
+                false
+            ]
+        },
+        "expected": true
+    },
+    {
+        "rules": {
+            "or": [
+                {"or": [false, false]},
+                {
+                    "or": [ 
+                        {"==": [0, 1]},
+                        false,
+                        {"==": [1, 0]}
+                    ]},
+                false
+            ]
+        },
+        "expected": false
+    }
+]
