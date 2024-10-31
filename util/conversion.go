@@ -40,6 +40,8 @@ func ToBool(value any) (res bool, err error) {
 		res = v != ""
 	case bool:
 		res = v
+	case []interface{}:
+		res = len(v) != 0
 	default:
 		return false, fmt.Errorf("unsupported type: %T", v)
 	}

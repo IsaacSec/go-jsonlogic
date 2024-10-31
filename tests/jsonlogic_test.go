@@ -28,6 +28,12 @@ func TestVarSolver(t *testing.T) {
 	assertTestCases(t, tests)
 }
 
+func TestNot(t *testing.T) {
+	tests := loadTestCases(t, "not.json")
+
+	assertTestCases(t, tests)
+}
+
 func loadTestCases(t *testing.T, filename string) []any {
 	file, err := os.Open("resources/" + filename)
 

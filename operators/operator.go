@@ -18,8 +18,8 @@ type pair struct {
 
 var Operators map[string]Operator = make(map[string]Operator)
 
-func (args Args) assertHavingTwoArgs() {
-	if len(args) < 2 {
+func (args Args) assertHavingArgs(quantity int) {
+	if len(args) < quantity {
 		panic(fmt.Sprintf("cannot evaluate expression with less than 2 arguments, given %d", len(args)))
 	}
 }
@@ -63,10 +63,10 @@ func Run(n *token.EvalNode) (res token.Result) {
 	return res
 }
 
-func (a Args) GetArgValueAndType() (list []pair) {
-	for i := range a {
+func (args Args) GetArgValueAndType() (list []pair) {
+	for i := range args {
 		var t string
-		arg := a[i]
+		arg := args[i]
 
 		if arg.Result != nil {
 			t = reflect.TypeOf(arg.Result).String()
@@ -94,4 +94,5 @@ func init() {
 	Operators["<="] = LessOrEqualsThan
 	Operators[">"] = GreaterThan
 	Operators[">="] = GreaterOrEqualsThan
+	Operators["!"] = Not
 }

@@ -33,7 +33,7 @@ func (args Args) getTwoComparableArgs() (a0 any, a1 any) {
 }
 
 func (args Args) getTwoNumericArgs() (arg0 float64, arg1 float64, err error) {
-	args.assertHavingTwoArgs()
+	args.assertHavingArgs(2)
 
 	return util.ConvertToFloat(args[0].Result, args[1].Result)
 }

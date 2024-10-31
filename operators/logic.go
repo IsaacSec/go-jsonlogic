@@ -38,8 +38,7 @@ func Or(args Args) (res token.Result) {
 }
 
 func Equals(args Args) (res token.Result) {
-
-	args.assertHavingTwoArgs()
+	args.assertHavingArgs(2)
 
 	var first, second = args.getTwoComparableArgs()
 
@@ -47,10 +46,17 @@ func Equals(args Args) (res token.Result) {
 }
 
 func NotEquals(args Args) (res token.Result) {
-
-	args.assertHavingTwoArgs()
+	args.assertHavingArgs(2)
 
 	var first, second = args.getTwoComparableArgs()
 
 	return first != second
+}
+
+func Not(args Args) (res token.Result) {
+	args.assertHavingArgs(1)
+
+	var arg = args[0].ToBool()
+
+	return !arg
 }

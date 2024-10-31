@@ -49,9 +49,9 @@ func parse(rules interface{}) *token.Node {
 						return buildOperationNode(op, args)
 
 					default:
-						logger.Error("Error parsing: [%v] %v -> %v", args, op, children)
+						logger.Error("Error parsing: Value: %v Operator: %v -> Children: %v", args, op, children)
 
-						return buildObjectNode(val)
+						return buildOperationNode(op, []interface{}{args})
 					}
 				}
 			}

@@ -33,5 +33,20 @@
         "rules": {"==": ["foo", {"var": "a.b.c"}]},
         "data": { "a": {  } },
         "expected": false
+    },
+    {
+        "rules": {"==": [{"var": "b"}, {"var": "a"}]},
+        "data": { "a": 1, "b": 1 },
+        "expected": true
+    },
+    {
+        "rules": {"==": [{"==": [{"var": "b"}, {"var": "a"}]}, true]},
+        "data": { "a": 1, "b": 1 },
+        "expected": true
+    },
+    {
+        "rules": {"==": [{"==": [{"var": "b"}, {"var": "a"}]}, true]},
+        "data": { "a": 1, "b": 2 },
+        "expected": false
     }
 ]
