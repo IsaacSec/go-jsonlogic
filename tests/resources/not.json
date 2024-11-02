@@ -8,9 +8,13 @@
         "expected": true
     },
     {
-        "rules": {"!": [{"!": []}]},
+        "rules": {"!": [{"!": [{"!": []}]}]},
         "expected": true
-    }
+    },
+    {
+        "rules": {"!": [{"!": []}]},
+        "expected": false
+    },
     {
         "rules": {"!": [""]},
         "expected": true
