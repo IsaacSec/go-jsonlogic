@@ -7,15 +7,13 @@ import (
 )
 
 type Reference struct {
-	Path     string
 	Fallback interface{}
+	Path     string
 }
 
 // Todo: handle arrays as data parameter
 func GetValue(data map[string]any, pathRef any) (val any) {
-
 	ref, err := getReference(pathRef)
-
 	if err != nil {
 		return nil
 	}
@@ -30,7 +28,6 @@ func GetValue(data map[string]any, pathRef any) (val any) {
 }
 
 func getReference(pathRef interface{}) (Reference, error) {
-
 	switch path := pathRef.(type) {
 
 	case string:
@@ -62,7 +59,6 @@ func getReference(pathRef interface{}) (Reference, error) {
 
 // Todo: handle array data
 func traversePath(data map[string]interface{}, path string) (interface{}, error) {
-
 	keys := strings.Split(path, ".")
 	current := data
 

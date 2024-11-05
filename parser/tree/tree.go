@@ -38,11 +38,10 @@ func (t Tree) EvaluateTree(data any) *token.EvalNode {
 
 func (t Tree) Flatten() []*token.Node {
 	// Start by adding root node
-	var flattened = []*token.Node{t.Root}
+	flattened := []*token.Node{t.Root}
 	var Add func(n *token.Node)
 
 	Add = func(n *token.Node) {
-
 		for i := range n.Childrens {
 			child := n.Childrens[i]
 
@@ -59,7 +58,6 @@ func (t Tree) Flatten() []*token.Node {
 }
 
 func eval(n *token.Node, data map[string]any) *token.EvalNode {
-
 	// Todo: check that adresses are different
 	new := token.EvalNode{
 		Token:  n.Token,
