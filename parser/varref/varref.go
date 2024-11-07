@@ -4,21 +4,23 @@ import (
 	"fmt"
 	"reflect"
 	"strings"
+
+	"github.com/IsaacSec/go-jsonlogic/util"
 )
 
 type Reference struct {
 	Fallback interface{}
 	Path     string
+	Index    int
 }
 
-// Todo: handle arrays as data parameter
-func GetValue(data map[string]any, pathRef any) (val any) {
+func GetValue(data any, pathRef any) (val any) {
 	ref, err := getReference(pathRef)
 	if err != nil {
 		return nil
 	}
 
-	value, err := traversePath(data, ref.Path)
+	value, err := traverseReference(data, ref)
 
 	if err != nil {
 		return ref.Fallback
@@ -29,25 +31,34 @@ func GetValue(data map[string]any, pathRef any) (val any) {
 
 func getReference(pathRef interface{}) (Reference, error) {
 	switch path := pathRef.(type) {
+	case float64:
+		index, err := util.ToInt(path)
+		return Reference{Index: index}, err
+	case int:
+		return Reference{Index: path}, nil
 
 	case string:
 		return Reference{Path: path}, nil
 
 	case []interface{}:
+		ref := Reference{}
+
 		if len(path) == 0 {
-			return Reference{}, fmt.Errorf("undefined json path")
+			return ref, fmt.Errorf("undefined json path")
 		}
-
-		strPath, ok := path[0].(string)
-
-		if !ok {
-			return Reference{}, fmt.Errorf("invalid path value, found (%v) %v", reflect.TypeOf(path[0]), path[0])
-		}
-
-		ref := Reference{Path: strPath}
 
 		if len(path) > 1 {
 			ref.Fallback = path[1]
+		}
+
+		if index, err := util.ToInt(path[0]); err == nil {
+			ref.Index = index
+		} else {
+			if strPath, ok := path[0].(string); ok {
+				ref.Path = strPath
+			} else {
+				return ref, fmt.Errorf("invalid path value, found (%v) %v", reflect.TypeOf(path[0]), path[0])
+			}
 		}
 
 		return ref, nil
@@ -58,7 +69,24 @@ func getReference(pathRef interface{}) (Reference, error) {
 }
 
 // Todo: handle array data
-func traversePath(data map[string]interface{}, path string) (interface{}, error) {
+func traverseReference(data any, ref Reference) (interface{}, error) {
+	switch d := data.(type) {
+	case []interface{}:
+		return getFromArray(d, ref.Index), nil
+
+	case interface{}:
+		if input, ok := d.(map[string]any); !ok {
+			return nil, fmt.Errorf("invalid input of type=%v", reflect.TypeOf(d))
+		} else {
+			return getFromMap(input, ref.Path)
+		}
+
+	default:
+		return nil, fmt.Errorf("invalid input of type=%v", reflect.TypeOf(d))
+	}
+}
+
+func getFromMap(data map[string]any, path string) (interface{}, error) {
 	keys := strings.Split(path, ".")
 	current := data
 
@@ -86,4 +114,12 @@ func traversePath(data map[string]interface{}, path string) (interface{}, error)
 
 	// Path is empty, the whole data must be returned
 	return data, nil
+}
+
+func getFromArray(data []any, index int) interface{} {
+	if index >= len(data) || index < 0 { // Index out of bound
+		return nil
+	}
+
+	return data[index]
 }

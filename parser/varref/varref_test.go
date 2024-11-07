@@ -16,6 +16,23 @@ func TestGetReferenceValueFromMap(t *testing.T) {
 	assert.Equal(t, 1, res)
 }
 
+func TestGetReferenceValueFromArray(t *testing.T) {
+	json := []any{"zero", "one", "two", "three"}
+
+	res := GetValue(json, 1)
+	assert.Equal(t, "one", res)
+}
+
+func TestGetReferenceValueFromArrayWhenOutOfBound(t *testing.T) {
+	json := []any{"zero", "one", "two"}
+
+	lower := GetValue(json, -1)
+	upper := GetValue(json, 4)
+
+	assert.Nil(t, lower)
+	assert.Nil(t, upper)
+}
+
 func TestGetFallbackOnMissingReference(t *testing.T) {
 	json := map[string]any{
 		"bar": "test",

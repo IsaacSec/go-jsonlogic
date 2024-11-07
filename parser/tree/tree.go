@@ -11,29 +11,24 @@ type Tree struct {
 }
 
 func (t Tree) Eval(data any) bool {
-	var input map[string]any
-
-	if data != nil {
-		input = data.(map[string]any)
-	} else {
-		input = make(map[string]any)
-	}
+	var input = sanitizeData(data)
 
 	return eval(t.Root, input).ToBool()
 }
 
-// A json object as input
-// Todo: implement array input
 func (t Tree) EvaluateTree(data any) *token.EvalNode {
-	var input map[string]any
-
-	if data != nil {
-		input = data.(map[string]any)
-	} else {
-		input = make(map[string]any)
-	}
+	var input = sanitizeData(data)
 
 	return eval(t.Root, input)
+}
+
+func sanitizeData(data any) any {
+	switch d := data.(type) {
+	case []interface{}, interface{}:
+		return d
+	default: // Other type of value or null
+		return make(map[string]any) // Empty json
+	}
 }
 
 func (t Tree) Flatten() []*token.Node {
@@ -57,7 +52,7 @@ func (t Tree) Flatten() []*token.Node {
 	return flattened
 }
 
-func eval(n *token.Node, data map[string]any) *token.EvalNode {
+func eval(n *token.Node, data interface{}) *token.EvalNode {
 	// Todo: check that adresses are different
 	new := token.EvalNode{
 		Token:  n.Token,

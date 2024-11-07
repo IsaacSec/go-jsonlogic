@@ -5,6 +5,31 @@ import (
 	"strconv"
 )
 
+func ToInt(value any) (res int, err error) {
+	switch v := any(value).(type) {
+	case int:
+		res = v
+	case float64:
+		res = int(v)
+	case string:
+		if v == "" {
+			res = 0.0
+		} else {
+			res, err = strconv.Atoi(v)
+		}
+	case bool:
+		if v {
+			res = 1
+		} else {
+			res = 0
+		}
+	default:
+		return 0, fmt.Errorf("unsupported type: %T", v)
+	}
+
+	return res, err
+}
+
 func ToFloat(value any) (res float64, err error) {
 	switch v := any(value).(type) {
 	case int:

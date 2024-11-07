@@ -48,5 +48,30 @@
         "rules": {"==": [{"==": [{"var": "b"}, {"var": "a"}]}, true]},
         "data": { "a": 1, "b": 2 },
         "expected": false
+    },
+    {
+        "rules": {"==": [{"var": 1}, "one"]},
+        "data": ["zero", "one", "two"],
+        "expected": true
+    },
+    {
+        "rules": {"==": [{"var": [1]}, "one"]},
+        "data": ["zero", "one", "two"],
+        "expected": true
+    },
+    {
+        "rules": {"==": [{"var": 2}, "one"]},
+        "data": ["zero", "one", "two"],
+        "expected": false
+    },
+    {
+        "rules": {"==": [{"var": 5}, null]},
+        "data": ["zero", "one", "two"],
+        "expected": true
+    },
+    {
+        "rules": {"==": [{"var": 5}, null]},
+        "data": 1000,
+        "expected": true
     }
 ]
